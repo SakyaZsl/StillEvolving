@@ -8,6 +8,7 @@ const route = useRoute()
 const main = ref<HTMLElement>()
 const navigation = [
   { hash: '#projects', label: '作品' },
+  { hash: '#tools', label: 'AI 小工具' },
   { hash: '#experience', label: '经历' },
   { hash: '#about', label: '关于' },
 ]

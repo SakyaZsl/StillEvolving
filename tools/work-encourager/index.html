@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f5ed" />
+    <meta name="description" content="把上班的每一秒，换算成看得见的收入。" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>上班收入鼓励器 · Still Evolving</title>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="portfolio-bar" aria-label="作品集导航">
+        <a class="portfolio-back" href="../../#tools"><span aria-hidden="true">←</span> 返回 AI 小工具</a>
+        <span>STILL EVOLVING / TOOLBOX</span>
+      </nav>
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>上班收入鼓励器</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="privacy-toggle" class="icon-button" type="button" aria-label="隐藏金额" aria-pressed="false" title="隐藏金额">
+            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.2 12s3.5-6.5 9.8-6.5 9.8 6.5 9.8 6.5-3.5 6.5-9.8 6.5S2.2 12 2.2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button id="settings-button" class="settings-button" type="button">修改月薪 <span aria-hidden="true">↗</span></button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-content">
+            <div class="eyebrow"><span class="eyebrow-dot"></span>把每一秒，算成小确幸</div>
+            <h1 id="hero-title">今天也在<br /><em>认真赚钱。</em></h1>
+            <p class="hero-copy">时间在走，收入也在慢慢靠近你。<br />抬头看一眼，今天又前进了一点点。</p>
+          </div>
+          <figure class="hero-art">
+            <img src="/tools/work-encourager/assets/cow-office.jpg" width="1200" height="800" alt="上班是为了下班：挂着牛马工牌的小牛，顶着黑眼圈坐在工位上敲键盘。" fetchpriority="high" />
+          </figure>
+        </section>
+
+        <section class="dashboard" aria-label="收入仪表盘">
+          <div class="counter-card">
+            <div class="card-topline">
+              <div class="card-label">今天已赚 <span class="label-sparkle" aria-hidden="true">✦</span></div>
+              <div id="work-status" class="status-pill"><span class="status-dot"></span><span id="status-text">准备中</span></div>
+            </div>
+            <div class="counter-wrap" aria-live="off"><span class="currency">¥</span><span id="today-earned" class="counter-value">0.00</span></div>
+            <p id="counter-hint" class="counter-hint">输入月薪，看看每一秒的收获。</p>
+            <div class="card-divider"></div>
+            <div class="progress-header"><span>今日进度</span><span id="progress-label">0%</span></div>
+            <div class="progress-track" role="progressbar" aria-label="今日工作进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+            <div class="progress-scale"><span>09:00 上班</span><span>18:00 下班</span></div>
+            <div id="encouragement" class="encouragement"><span class="encouragement-icon" aria-hidden="true">✳</span><span id="encouragement-text">今天的好运，从开工开始。</span></div>
+          </div>
+
+          <div class="side-stack">
+            <div class="info-card month-card">
+              <div class="info-heading"><span class="info-icon" aria-hidden="true">◈</span><span>本月已赚</span></div>
+              <div id="month-earned" class="info-value">¥0.00</div>
+              <div id="month-note" class="info-note">按本月实际工作日计算</div>
+            </div>
+            <div class="info-card second-card">
+              <div class="info-heading"><span class="info-icon" aria-hidden="true">◷</span><span>每秒收入</span></div>
+              <div id="second-rate" class="info-value">¥0.00</div>
+              <div class="info-note">小数点后两位，认真算每一分</div>
+            </div>
+            <div class="salary-line"><span>当前税后月薪</span><strong id="salary-display">未设置</strong></div>
+          </div>
+        </section>
+
+        <p id="calendar-warning" class="calendar-warning" hidden>⚠ 当前年份的节假日安排尚未更新，暂按周一至周五估算。月末金额可能调整。</p>
+        <p class="footnote">按北京时间 · 09:00–12:00、13:30–18:00 · 每天 7.5 小时<br />法定节假日与调休以已发布数据为准；21.75 天仅作月平均参考。</p>
+
+        <section class="tool-story" aria-labelledby="story-title">
+          <p class="story-kicker">STILL EVOLVING / BUILD NOTES</p>
+          <h2 id="story-title">这个工具是怎么做出来的</h2>
+          <div class="story-grid">
+            <div><h3>为什么做</h3><p>发薪是按月的，上班却是一秒一秒过的。我想把每天的工作时间换成看得见的小进度，给自己一点即时反馈。</p></div>
+            <div><h3>怎么定规则</h3><p>我按当月实际工作日分摊税后月薪。北京时间上午和下午各计一段，合计 7.5 小时；午休不累加，节假日和调休跟随已发布的安排。</p></div>
+            <div><h3>AI 帮了什么</h3><p>我提出使用场景和计时规则，借助 AI 梳理工作日和跨时区的边界，实现页面与计算逻辑，并用测试核对午休、补班和月底结算。</p></div>
+          </div>
+          <a class="portfolio-back" href="../../#tools"><span aria-hidden="true">←</span> 返回 AI 小工具</a>
+        </section>
+      </main>
+
+      <footer class="footer"><span>给每个认真上班的你 ✳</span><span>收入只保存在这台设备的浏览器中</span></footer>
+    </div>
+
+    <dialog id="salary-dialog" class="salary-dialog" aria-labelledby="dialog-title">
+      <form id="salary-form" method="dialog" novalidate>
+        <button id="dialog-close" class="dialog-close" type="button" aria-label="关闭">×</button>
+        <div class="dialog-sparkle" aria-hidden="true">✳</div>
+        <h2 id="dialog-title">先设定你的月薪</h2>
+        <p class="dialog-description">可以先用 12,000 元试试。输入的金额只会保存在当前浏览器里。</p>
+        <label for="salary-input">税后月薪（人民币）</label>
+        <div class="input-wrap"><span>¥</span><input id="salary-input" name="salary" type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" autocomplete="off" placeholder="例如 12000" required /></div>
+        <p id="salary-error" class="form-error" role="alert" hidden>请输入大于 0 且不超过 10 亿元的月薪。</p>
+        <button class="primary-button" type="submit">开始看看今天赚了多少 <span aria-hidden="true">→</span></button>
+        <p class="dialog-footnote">月薪修改后，会按新金额重算整个本月。</p>
+      </form>
+    </dialog>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

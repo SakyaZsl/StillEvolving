@@ -25,9 +25,9 @@ img { display: block; max-width: 100%; }
 .header-inner, .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 72px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 750; letter-spacing: -.045em; white-space: nowrap; }
 .brand-period { color: #4e7129; }
-nav { display: flex; gap: clamp(14px, 3.2vw, 39px); color: var(--muted); font-size: 14px; }
-nav a { padding-block: 8px; white-space: nowrap; }
-nav a:hover, nav [aria-current="location"] { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
+.site-header nav { display: flex; gap: clamp(14px, 3.2vw, 39px); color: var(--muted); font-size: 14px; }
+.site-header nav a { padding-block: 8px; white-space: nowrap; }
+.site-header nav a:hover, .site-header nav [aria-current="location"] { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
 .hero { padding: 71px 0 67px; display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 5vw, 76px); align-items: center; }
 .hero-copy { padding-block: 10px; }
 .eyebrow, .section-index { color: #526049; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .105em; }
@@ -111,18 +111,12 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .card-heading p { color: var(--muted); font-size: 12px; margin-bottom: 5px; }
 .card-heading h3 { font-size: 28px; letter-spacing: -.035em; }
 .circle-arrow { display: grid; place-items: center; flex: 0 0 auto; width: 38px; height: 38px; border: 1px solid #cbd2c4; border-radius: 50%; transition: background-color .18s, border-color .18s; }
-:is(.project-card,.timeline-link):hover .circle-arrow { background: var(--accent); border-color: #b5e661; }
+.project-card:hover .circle-arrow { background: var(--accent); border-color: #b5e661; }
 .card-description { margin-top: 11px; color: var(--muted); line-height: 1.7; font-size: 14px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; list-style: none; margin-top: 14px; }
 .tags li { border-radius: 30px; padding: 4px 9px; background: #f0f2eb; color: #485444; font-size: 11px; line-height: 1.4; }
 .other-work { margin-top: 22px; }
 .simple-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: underline; text-underline-offset: 4px; margin: 10px 14px 0 0; font-weight: 650; }
-.timeline { padding: 0; list-style: none; border-top: 1px solid var(--line); }
-.timeline-link { display: grid; grid-template-columns: 155px 1fr auto; align-items: center; gap: 10px; padding: 19px 12px; border-bottom: 1px solid var(--line); }
-.timeline-link:hover { background: #eef0e8; }
-.timeline-period { font-size: 12px; color: #526049; }
-.timeline h3 { font-size: 23px; }
-.timeline p { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 .release { border-radius: 16px; padding: 35px; background: var(--panel); color: #f1f4ea; }
 .release .section-index { color: #bddd9e; }
 .release-intro { margin-top: 13px; max-width: 600px; color: #dde7d7; line-height: 1.75; }
@@ -142,11 +136,7 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .detail h1, .missing h1 { font-size: clamp(43px, 6vw, 75px); margin-block: 8px 12px; letter-spacing: -.06em; }
 .detail-lead { max-width: 510px; }
 .detail-demo { margin-top: 16px; }
-.detail-hero .project-visual, .company-cover { border-radius: 15px; height: 237px; }
-.company-cover { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 18px 21px; background-color: #e8eee2; background-image: linear-gradient(#fff9 1px,transparent 1px),linear-gradient(90deg,#fff9 1px,transparent 1px); background-size: 22px 22px; color: #42523c; overflow: hidden; }
-.company-cover span { font: 11px var(--mono); letter-spacing: .1em; }
-.company-cover strong { align-self: center; font-size: 119px; font-weight: 800; line-height: 1; color: #344c37; }
-.company-cover i { font-style: normal; color: #668e43; }
+.detail-hero .project-visual { border-radius: 15px; height: 237px; }
 .fact-strip { display: flex; flex-wrap: wrap; gap: 18px 43px; padding: 17px 0; margin-block: 24px 30px; border-block: 1px solid var(--line); }
 .fact-strip dt { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
 .fact-strip dd { font-weight: 650; font-size: 15px; }
@@ -157,10 +147,6 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .step-number { font: 12px var(--mono); color: #526049; }
 .step-grid h3 { margin-block: 8px 6px; font-size: 18px; }
 .step-grid p { color: var(--muted); line-height: 1.75; font-size: 14px; }
-.detail-flow { border-radius: 12px; padding: 18px; background: #e9eee3; }
-.detail-flow ul { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(140px, 100%),1fr)); gap: 6px; padding: 0; list-style: none; }
-.detail-flow li { text-align: center; padding: 9px 6px; background: #f7f9f2; border-radius: 6px; font-size: 14px; }
-.flow-result { text-align: center; margin-top: 8px; line-height: 1.7; }
 .media-grid img { border: 1px solid var(--line); border-radius: 10px; }
 .media-grid figcaption { font-size: 13px; color: var(--muted); margin-top: 7px; }
 .missing { padding-block: 55px 80px; }
@@ -175,7 +161,7 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
   .header-inner { min-height: 58px; gap: 10px; }
   .brand { font-size: 15px; gap: 6px; }
   .brand img { width: 26px; height: 26px; }
-  nav { gap: 12px; font-size: 12px; }
+  .site-header nav { gap: 12px; font-size: 12px; }
   .hero, .detail-hero, .about { grid-template-columns: 1fr; }
   .hero { padding-block: 28px 36px; gap: 18px; }
   .hero h1 { font-size: clamp(48px, 13vw, 70px); margin-block: 14px; }
@@ -191,14 +177,12 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
   .project-grid, .media-grid { grid-template-columns: 1fr; }
   .project-visual { height: 185px; }
   .card-body { padding: 16px; }
-  .timeline-link { grid-template-columns: 1fr auto; gap: 4px 8px; padding-inline: 6px; }
-  .timeline-period { grid-column: 1 / -1; }
   .release { padding-inline: 16px; }
   .release-flow { grid-template-columns: 1fr 1fr; }
   .about { margin-top: 33px; }
   .detail { padding-block: 25px 44px; }
   .detail-hero { margin-top: 17px; }
-  .detail-hero .project-visual, .company-cover { height: 190px; }
+  .detail-hero .project-visual { height: 190px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }

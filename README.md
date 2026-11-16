@@ -11,7 +11,9 @@ npm ci
 npm run dev
 ```
 
-运行 `npm run build` 会先检查 TypeScript，再把可发布文件写到 `dist/`。构建会为每个项目和公司生成独立入口，支持直接打开或刷新详情页。将 `dist/` 发布到支持目录索引（`index.html`）的静态服务器即可。部署到子目录时，指定站点路径，例如 `npm run build -- --base /StillEvolving/`。
+运行 `npm run build` 会先检查 TypeScript，再把可发布文件写到 `dist/`。构建会为每个项目、公司和履历专题生成独立入口，支持直接打开或刷新详情页。将 `dist/` 发布到支持目录索引（`index.html`）的静态服务器即可。部署到子目录时，指定站点路径，例如 `npm run build -- --base /StillEvolving/`。
+
+运行 `npm test` 可以验证小工具的计时、节假日和补班逻辑。
 
 ## 发布到 GitHub Pages
 
@@ -24,6 +26,7 @@ npm run dev
 ## 更新内容
 
 - 在 `src/content.ts` 的 `projects` 里新增作品，使用唯一的短横线 slug。设置 `featured: true` 可加入首页代表项目；其他作品自动进入「更多作品」。有公开体验地址时可填写 `demoUrl`。
-- 在同一文件的 `companies` 中维护经历，按时间倒序排列。确认项目归属后，可通过 `projectSlugs` 将公司页链接到对应作品。可补充职责、事实、问题处理流程和配图。
+- 在同一文件的 `companies` 中按时间从早到晚维护公司；地图会按这个顺序放置节点。公司有一页 `overview`，并可通过 `topics` 添加独立专题。公司、专题各自使用唯一的短横线 slug。栏目可以配置图文段落、流程和配图，也可以通过 `projectSlugs` 链接到已确认归属的作品。
+- 在 `src/tools.ts` 添加小工具的名称、封面和简介，并在 `tools/<slug>/index.html` 放置工具入口。构建会自动生成这个工具的独立页面。需要在运行时读取的数据和封面放在 `public/tools/<slug>/` 下。鼓励器的节假日数据在对应的 `data/` 目录中。
 - 将可公开的 App 截图和工作配图放进 `public/media/`，在条目的 `media` 中填入 `path`（例如 `media/catalog.png`）、替代文字和图注。
 - 有可公开的简历和邮箱时，填写 `profile.resumePath` 和 `profile.email`。简历文件放在 `public/` 内，未配置时不会显示下载或联系入口。

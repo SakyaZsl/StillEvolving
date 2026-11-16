@@ -16,12 +16,26 @@ export type Project = Entry & {
   featured?: boolean
   demoUrl?: string
 }
-export type Company = Entry & {
+export type CompanyPage = {
+  slug?: string
+  title: string
+  summary: string
+  intro: string
+  sections?: Step[]
+  facts?: Entry['facts']
+  media?: Media[]
+  flow?: { title: string; items: string[] }
+  projectSlugs?: string[]
+}
+export type Company = {
+  slug: string
+  name: string
   period: string
   line: string
-  tags: string[]
-  projectSlugs?: string[]
-  issueFlow?: { sources: string[]; resolution: string }
+  landmark?: 'workshop' | 'tower'
+  current?: boolean
+  overview: Omit<CompanyPage, 'slug'>
+  topics?: (CompanyPage & { slug: string })[]
 }
 
 // 有可公开的资料时填写。未填写的链接不会出现在页面上。
@@ -70,35 +84,82 @@ export const projects: Project[] = [
 
 export const companies: Company[] = [
   {
-    slug: 'kaisheng',
-    name: '凯盛',
-    period: '当前任职',
-    line: '现任工作经历',
-    intro: '凯盛是我目前任职的公司。',
-    tags: [],
-    facts: [{ label: '任职状态', value: '当前任职' }],
-  },
-  {
     slug: 'zhongfei',
     name: '中飞',
     period: '上一段经历',
     line: 'App 重构、多机型适配与线上问题处理',
-    intro: '在中飞，我主要负责 App 重构，也处理日常测试问题、Android 多机型兼容适配，以及在线客服收到的用户反馈。',
-    tags: ['App 重构', 'Android 多机型', '线上支持'],
-    facts: [
-      { label: '主要职责', value: 'App 重构' },
-      { label: '日常工作', value: '测试反馈、机型适配与用户问题跟进' },
+    landmark: 'workshop',
+    overview: {
+      title: '公司与项目介绍',
+      summary: '我在中飞负责什么',
+      intro: '在中飞，我主要负责已有 Android App 的重构，也处理日常测试问题、多机型兼容适配，以及在线客服收到的用户反馈。',
+      facts: [
+        { label: '主要职责', value: 'App 重构' },
+        { label: '工作范围', value: '开发、测试问题处理与线上支持' },
+      ],
+      sections: [
+        { title: '维护和改造已有应用', text: '我的工作既涉及重构已有代码，也包括处理测试时发现的问题。重构和日常维护都围绕同一款 App 展开。' },
+        { title: '跟进真实使用环境中的问题', text: '对于不同 Android 机型的兼容问题，我负责做代码适配。用户在线上遇到问题时，也可以通过在线客服反馈，由我跟进处理。' },
+      ],
+    },
+    topics: [
+      {
+        slug: 'app-refactor',
+        title: 'App 重构',
+        summary: '改造既有 App，处理日常测试反馈',
+        intro: '重构是我在中飞的主要职责。除了改造既有 App，我也处理日常测试反馈，跟进应用在测试中的实际表现。',
+        facts: [{ label: '负责范围', value: '既有 App 的重构与日常问题处理' }],
+        sections: [
+          { title: '既有应用的改造', text: '工作对象是已有的 App。我负责对现有代码进行重构，处理改造工作中的开发问题。' },
+          { title: '日常测试问题', text: '测试发现问题后，我负责跟进对应的代码问题。涉及不同设备表现的问题，也会按 Android 机型兼容适配来处理。' },
+        ],
+      },
+      {
+        slug: 'android-compatibility',
+        title: 'Android 多机型适配',
+        summary: '针对不同 Android 机型调整代码',
+        intro: '我负责处理同一款 App 在不同 Android 机型上的兼容问题，并根据设备的实际表现做代码适配。',
+        facts: [{ label: '适配对象', value: '同一款 App 在不同 Android 机型上的表现' }],
+        sections: [
+          { title: '难点：差异来自实际设备', text: '同一套代码需要在多种机型上运行。遇到机型兼容问题时，具体设备上的表现是判断适配范围的依据。' },
+          { title: '个人贡献：代码适配', text: '我根据不同机型的表现调整 App 代码，处理兼容性问题。' },
+        ],
+      },
+      {
+        slug: 'online-support',
+        title: '线上用户问题处理',
+        summary: '通过在线客服跟进 App 使用问题',
+        intro: '除了开发和测试，我也通过在线客服直接接收用户反馈，跟进用户在实际使用 App 时遇到的问题。',
+        sections: [
+          { title: '接收一线反馈', text: '在线客服是我接触用户反馈的入口。通过这个渠道，我能了解用户在日常使用中遇到的问题。' },
+          { title: '跟进对应的问题', text: '我负责及时跟进并处理收到的使用问题。遇到与设备兼容有关的问题时，也需要回到 App 代码做适配。' },
+        ],
+        flow: { title: '从反馈到处理', items: ['接收在线客服反馈', '跟进用户遇到的问题', '处理并跟进结果'] },
+      },
     ],
-    steps: [
-      { title: '推进 App 重构', text: '负责 App 的重构工作，同时处理日常测试发现的问题。' },
-      { title: '适配不同 Android 机型', text: '根据不同机型的表现调整代码，处理兼容性问题。' },
-      { title: '跟进线上用户问题', text: '通过在线客服接收用户反馈，及时跟进并处理实际使用中遇到的问题。' },
-    ],
-    issueFlow: {
-      sources: ['日常测试反馈', '不同 Android 机型', '在线客服反馈'],
-      resolution: '定位、修复或适配，跟进处理结果',
+  },
+  {
+    slug: 'kaisheng',
+    name: '凯盛',
+    period: '当前任职',
+    current: true,
+    line: '现在的工作经历',
+    landmark: 'tower',
+    overview: {
+      title: '工作经历概览',
+      summary: '当前任职信息',
+      intro: '凯盛是我目前任职的公司。',
+      facts: [{ label: '任职状态', value: '当前任职' }],
     },
   },
 ]
+
+export function companyPages(company: Company): CompanyPage[] {
+  return [company.overview, ...(company.topics ?? [])]
+}
+
+export function findCompanyPage(company: Company, topic?: string): CompanyPage | undefined {
+  return topic ? company.topics?.find((page) => page.slug === topic) : company.overview
+}
 
 export const releaseSteps = ['梳理市场要求', '准备资质材料', '提交与跟进审核', '按反馈补齐']
