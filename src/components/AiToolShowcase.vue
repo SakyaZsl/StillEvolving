@@ -19,8 +19,8 @@ import { publicUrl } from '../public-url'
             <ul class="tags" aria-label="工具特点"><li v-for="tag in tool.tags" :key="tag">{{ tag }}</li></ul>
             <span class="button tool-card-button">立即体验 <span aria-hidden="true">↗</span></span>
           </div>
-          <div class="tool-card-art">
-            <img :src="publicUrl(tool.cover)" width="1200" height="800" loading="lazy" decoding="async" alt="" />
+          <div class="tool-card-art" :class="{ 'tool-card-art--contain': tool.coverFit === 'contain' }">
+            <img :src="publicUrl(tool.cover)" :style="{ objectFit: tool.coverFit }" width="1200" height="800" loading="lazy" decoding="async" alt="" />
           </div>
         </a>
       </li>

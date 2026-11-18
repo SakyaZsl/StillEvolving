@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test": "node --test",
+    "sync:life-data": "node scripts/sync-life-data.mjs",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },

@@ -9,5 +9,5 @@
     "types": ["vite/client"],
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "tools/**/*.ts", "tools/**/*.mts", "tools/**/*.vue", "vite.config.ts"]
 }

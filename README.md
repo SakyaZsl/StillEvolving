@@ -13,7 +13,25 @@ npm run dev
 
 运行 `npm run build` 会先检查 TypeScript，再把可发布文件写到 `dist/`。构建会为每个项目、公司和履历专题生成独立入口，支持直接打开或刷新详情页。将 `dist/` 发布到支持目录索引（`index.html`）的静态服务器即可。部署到子目录时，指定站点路径，例如 `npm run build -- --base /StillEvolving/`。
 
-运行 `npm test` 可以验证小工具的计时、节假日和补班逻辑。
+运行 `npm test` 可以验证收入鼓励器的计时、节假日和补班逻辑，以及生活性价比助手的资料完整性、评级规则、检索和适用范围提示。
+
+## 生活性价比助手
+
+本地启动后打开 `/tools/life-value/`，也可从首页「AI 小工具」卡片进入。支持输入问题、限定分类、直接浏览章节，以及通过 `?entry=14-3` 分享单条资料。
+
+当前收录 [HowToLiveBetter](https://github.com/eternity4719/HowToLiveBetter) 的全部 34 个章节、772 条建议，固定于版本 [`49fceab`](https://github.com/eternity4719/HowToLiveBetter/tree/49fceab4254c8c2df0f7cdb1b2959cab6c451b96)。完整章节原文、项目说明和许可保存在 `public/tools/life-value/source/`，可检索快照保存在同目录的 `library.json`。正文按 CC BY 4.0 许可整理，原项目评级代码按 MIT 许可使用；界面保留原文入口、资料版本与许可说明。
+
+资料加载后，检索在浏览器内通过关键词和常用同义词完成，不调用在线模型或后台。年龄段与地区选填，问题和个人信息均不保存、不上传。检索用于定位相关条目，无法完整理解所有问法或代替适用性判断；性价比档位对应原条目，证据等级单独展示。缺少适用条件时会明确提示，部分匹配和无结果也有对应说明。
+
+更新上游资料需要 Node.js 和 `curl`，运行：
+
+```sh
+npm run sync:life-data
+# 或指定需要复现的上游提交
+npm run sync:life-data -- 49fceab4254c8c2df0f7cdb1b2959cab6c451b96
+```
+
+同步脚本会先下载并解析全部章节，校验成功后再替换本地资料。更新后需核对条目数量、解析格式与上游评级规则，更新对应的快照测试及说明，再运行 `npm test` 和 `npm run build -- --base /StillEvolving/`。构建和访问时都不需要连接上游仓库。
 
 ## 发布到 GitHub Pages
 
