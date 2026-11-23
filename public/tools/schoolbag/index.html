@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7ee">
+  <title>上学放学清单</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Nunito, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #232b20;
+      background: #f6f7ee;
+      --ink: #232b20;
+      --muted: #596353;
+      --line: #e5e8db;
+      --green: #275b3b;
+      --surface: #fffefa;
+      --radius: 22px;
+      --wrap: min(1232px, calc(100% - 72px));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 300px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; color: inherit; }
+    button, input { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, .check-row:has(:focus-visible) {
+      outline: 3px solid #438c50;
+      outline-offset: 3px;
+    }
+    [hidden] { display: none !important; }
+    h1, h2, h3, p { margin: 0; }
+
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+    .topbar-inner {
+      width: var(--wrap); min-height: 72px; margin: auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px; white-space: nowrap;
+      border: 0; padding: 0; background: none; font-weight: 800; font-size: 17px;
+    }
+    .brand-icon {
+      display: grid; place-items: center; width: 38px; height: 38px;
+      border-radius: 12px; background: #e5f1cc; font-size: 20px; flex: 0 0 auto;
+    }
+    .navigation { display: flex; align-items: center; gap: 5px; }
+    .nav-button {
+      background: none; border: 0; border-radius: 10px; color: var(--muted);
+      padding: 9px 16px; font-size: 14px; font-weight: 750; white-space: nowrap;
+    }
+    .nav-button:hover { background: #f1f3e9; color: var(--ink); }
+    .nav-button[aria-current="page"] { color: var(--green); background: #e8f2d9; }
+
+    main { width: var(--wrap); margin: 30px auto 0; }
+    .hero {
+      position: relative; display: flex; align-items: center; isolation: isolate;
+      min-height: 192px; border: 1px solid #dce8bf; border-radius: 25px;
+      background: #e7f1cc; overflow: hidden; margin-bottom: 24px;
+    }
+    .hero-copy { padding: 27px 38px; position: relative; z-index: 1; }
+    .today-date {
+      display: inline-flex; align-items: center; gap: 7px; color: #365b3b;
+      background: #f7f9ea; border: 1px solid #d9e5c3; padding: 5px 11px;
+      border-radius: 30px; font-size: 12px; font-weight: 800;
+    }
+    .today-date::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #5a9658; }
+    .hero h1 { color: #233d27; font-size: clamp(30px, 4vw, 48px); line-height: 1.17; letter-spacing: -.055em; margin: 9px 0 8px; }
+    .hero p { color: #435943; font-size: 15px; line-height: 1.55; }
+    .hero-art { position: absolute; inset: 0 0 0 auto; width: 410px; pointer-events: none; }
+    .art-orbit {
+      position: absolute; top: -29px; right: 41px; width: 303px; height: 245px;
+      border: 1px solid #d7e4b7; border-radius: 50%; transform: rotate(-14deg);
+    }
+    .art-orbit::before, .art-orbit::after {
+      content: ""; position: absolute; inset: 26px; border: 1px solid #d7e4b7; border-radius: 50%;
+    }
+    .art-orbit::after { inset: 53px; }
+    .art-book {
+      position: absolute; top: 25px; right: 116px; width: 158px; height: 138px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-content: center;
+      padding: 25px 14px 14px; border-radius: 12px; border: 2px solid #55805b;
+      background: #fffdf3; box-shadow: 5px 7px 0 #a9c48a; transform: rotate(10deg);
+    }
+    .art-book::before {
+      content: ""; position: absolute; left: 12px; right: 12px; top: 14px; height: 2px;
+      background: #dce6d5; border-radius: 8px;
+    }
+    .art-book::after {
+      content: ""; position: absolute; width: 52%; height: 11px; left: 24%; top: -8px;
+      background: #65926b; border: 2px solid #55805b; border-radius: 5px;
+    }
+    .art-book span { height: 20px; border-radius: 4px; background: #eef1e6; }
+    .art-book span:nth-child(1), .art-book span:nth-child(8) { background: #ffdf8b; }
+    .art-book span:nth-child(3), .art-book span:nth-child(10) { background: #bfd8f4; }
+    .art-book span:nth-child(4), .art-book span:nth-child(7) { background: #edc9ed; }
+    .art-book span:nth-child(6), .art-book span:nth-child(11) { background: #b9dca7; }
+    .art-pencil {
+      position: absolute; width: 111px; height: 17px; top: 111px; right: 24px;
+      transform: rotate(-33deg); background: #ffc86a; border: 2px solid #8a5931;
+      border-radius: 6px 0 0 6px; box-shadow: 0 4px 0 #c9d9a9;
+    }
+    .art-pencil::before {
+      content: ""; position: absolute; inset: 0 auto 0 0; width: 21px;
+      background: #ef9daf; border-right: 2px solid #8a5931; border-radius: 4px 0 0 4px;
+    }
+    .art-pencil::after {
+      content: ""; position: absolute; top: -2px; right: -20px; width: 20px; height: 17px;
+      background: linear-gradient(90deg, #8a5931 9%, #ffe1ae 9% 72%, #51423a 72%);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+    .art-spark { position: absolute; font-size: 24px; font-weight: 900; line-height: 1; color: #678b53; }
+    .art-spark.first { left: 101px; top: 108px; }
+    .art-spark.second { right: 66px; top: 36px; font-size: 19px; }
+
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.95fr) minmax(295px, 1fr); gap: 20px; align-items: start; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 3px 9px #35472806; }
+    .panel-heading {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 21px 22px 14px;
+    }
+    .panel h2 { font-size: 21px; line-height: 1.2; letter-spacing: -.04em; }
+    .panel-hint { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.45; }
+    .table-meta { display: flex; align-items: end; flex-direction: column; gap: 4px; }
+    .week-range {
+      flex: 0 0 auto; padding: 6px 9px; border-radius: 7px;
+      background: #f1f2e9; color: var(--muted); font-size: 12px; font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+    .table-scroll { overflow-x: auto; padding: 0 15px 13px; }
+    .timetable { width: 100%; min-width: 483px; border-collapse: separate; border-spacing: 5px 5px; table-layout: fixed; text-align: center; }
+    .timetable th, .timetable td { padding: 0; }
+    .period-column { width: 48px; }
+    .weekday {
+      display: grid; place-items: center; gap: 2px; width: 100%; min-height: 50px;
+      border: 1px solid transparent; border-radius: 10px; padding: 5px;
+      background: #f3f5ed; font-size: 14px; font-weight: 850;
+    }
+    .weekday:hover { background: #e9efdd; }
+    .weekday[aria-pressed="true"] { border-color: #c2daa9; background: #e5f0d4; color: #2e5936; }
+    .weekday-date { color: var(--muted); font-size: 11px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .today-badge { font-size: 10px; margin-left: 3px; color: var(--green); vertical-align: 1px; }
+    .period-num { font-size: 12px; font-weight: 720; color: var(--muted); white-space: nowrap; }
+    .break-row td { height: 17px; text-align: left; }
+    .break-line { color: var(--muted); font-size: 10px; display: flex; align-items: center; gap: 9px; }
+    .break-line::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .course {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; min-height: 42px; border: 1px solid transparent; border-radius: 9px;
+      padding: 4px 6px; background: #f0f2eb; font-size: 13px; font-weight: 750;
+    }
+    .course-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .course.filled {
+      background: #edf2e8;
+      background: color-mix(in srgb, var(--subject-color) 12%, #fffefa);
+      border-color: color-mix(in srgb, var(--subject-color) 16%, #fffefa);
+    }
+    .course:hover { border-color: #79916f; }
+    .course.empty { background: #f8f8f3; color: #788472; }
+    .course-dot, .subject-dot {
+      display: inline-block; flex: 0 0 auto; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--subject-color);
+    }
+
+    .lists { overflow: hidden; }
+    .lists .panel-heading { border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+    .day-controls { display: flex; gap: 4px; }
+    .small-button {
+      width: 31px; height: 31px; display: grid; place-items: center; line-height: 1;
+      background: #f4f5ed; border: 1px solid var(--line); border-radius: 8px; font-size: 19px;
+    }
+    .small-button:hover:enabled { background: #e9efdd; }
+    .small-button:disabled { cursor: default; opacity: .42; }
+    .list-section { padding: 15px 17px; }
+    .list-section + .list-section { border-top: 1px solid var(--line); }
+    .list-title {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 15px; color: #4b3c27; font-weight: 800; margin-bottom: 9px;
+    }
+    .list-title.afternoon { color: #31553b; }
+    .list-title h3 { font-size: inherit; }
+    .list-icon {
+      display: grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px;
+      background: #ffedba; border-radius: 8px; font-size: 15px;
+    }
+    .afternoon .list-icon { background: #e5efcf; }
+    .list-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .check-items { list-style: none; padding: 0; margin: 0; }
+    .check-row {
+      position: relative; display: flex; gap: 9px; align-items: center; min-height: 34px;
+      border: 1px solid transparent; border-radius: 8px; padding: 4px 5px; cursor: pointer;
+    }
+    .check-row:hover { background: #f5f6ee; }
+    .check-row input, .binding-toggle input { width: 17px; height: 17px; margin: 0; flex: 0 0 auto; accent-color: var(--green); cursor: pointer; }
+    .check-row input:focus-visible { outline: none; }
+    .item-copy { min-width: 0; flex: 1; }
+    .item-name { font-size: 13px; font-weight: 750; }
+    .item-subject { color: var(--muted); font-size: 11px; margin-left: 6px; }
+    .check-row:has(:checked) .item-name { text-decoration: line-through; color: var(--muted); }
+    .list-empty { color: var(--muted); font-size: 13px; line-height: 1.55; padding: 5px 3px 8px; }
+
+    footer {
+      width: var(--wrap); margin: 18px auto 24px; text-align: right;
+      color: var(--muted); font-size: 12px;
+    }
+    #storage-status { display: inline-flex; align-items: center; gap: 6px; }
+    #storage-status::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #6f9a60; }
+    #storage-status.unsaved::before { background: #bb7a34; }
+
+    .manage-page { min-height: 475px; }
+    .manage-intro { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 8px 0 20px; }
+    .manage-intro h1 { font-size: clamp(25px, 4vw, 35px); line-height: 1.2; letter-spacing: -.04em; }
+    .manage-intro p { color: var(--muted); margin-top: 7px; font-size: 14px; line-height: 1.5; }
+    .primary-button, .secondary-button, .danger-button {
+      padding: 9px 15px; border: 1px solid transparent; border-radius: 10px;
+      font-size: 14px; font-weight: 750; white-space: nowrap;
+    }
+    .primary-button { background: var(--green); color: #fff; }
+    .primary-button:hover { background: #204b31; }
+    .secondary-button { background: #f2f4e9; border-color: var(--line); color: var(--ink); }
+    .secondary-button:hover { background: #e9efdd; }
+    .danger-button { background: #a7323d; color: #fff; }
+    .danger-button:hover { background: #882732; }
+    .manage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .manage-card { padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 15px; }
+    .manage-card h2 { display: flex; align-items: center; gap: 9px; font-size: 16px; overflow-wrap: anywhere; line-height: 1.35; }
+    .manage-card p { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .manage-card-actions { display: flex; gap: 6px; margin-top: 11px; }
+    .text-button {
+      border: 0; background: #f3f5ec; color: var(--green); border-radius: 7px;
+      padding: 5px 9px; font-size: 12px; font-weight: 750;
+    }
+    .text-button:hover { background: #e8efd9; }
+    .text-button.delete { background: #fbf0ed; color: #8b3c42; }
+    .text-button.delete:hover { background: #f5dfdd; }
+    .empty-panel { padding: 24px; color: var(--muted); line-height: 1.55; }
+    .empty-panel p + button { margin-top: 12px; }
+    .subject-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .subject-pill {
+      display: flex; align-items: center; gap: 7px; padding: 8px 12px;
+      border: 1px solid var(--line); border-radius: 22px; background: var(--surface); font-weight: 750; font-size: 14px;
+    }
+    .subject-pill:hover { border-color: #b7c7ac; }
+    .subject-pill[aria-pressed="true"] { background: #e8f2d9; border-color: #b5cd9e; color: var(--green); }
+    .binding-panel { max-width: 800px; }
+    .binding-panel .panel-heading { border-bottom: 1px solid var(--line); }
+    .binding-table { width: calc(100% - 32px); margin: 0 16px 10px; table-layout: fixed; border-collapse: collapse; }
+    .binding-direction { width: clamp(65px, 24%, 110px); }
+    .binding-table th, .binding-table td { border-bottom: 1px solid var(--line); height: 45px; padding: 0; }
+    .binding-table thead th { font-weight: 750; color: var(--muted); font-size: 13px; }
+    .binding-table thead th:first-child, .binding-name { text-align: left; padding-left: 5px; }
+    .binding-table tbody tr:last-child > * { border-bottom: 0; }
+    .binding-name { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+    .binding-toggle { display: grid; place-items: center; min-height: 44px; cursor: pointer; }
+    .binding-toggle:hover { background: #f3f5ec; }
+
+    dialog {
+      width: min(460px, calc(100% - 26px)); max-height: min(85dvh, 650px);
+      padding: 23px; border: 1px solid var(--line); border-radius: 20px;
+      background: var(--surface); color: var(--ink); box-shadow: 0 18px 60px #1f322c33;
+    }
+    dialog::backdrop { background: #222e25a1; }
+    .dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+    .dialog-heading h2 { font-size: 21px; letter-spacing: -.035em; }
+    .dialog-actions { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px; margin-top: 18px; }
+    .field-label { display: block; font-size: 14px; font-weight: 750; margin-bottom: 6px; }
+    .name-input { display: block; width: 100%; border: 1px solid #cbd1c3; border-radius: 9px; color: var(--ink); padding: 9px 11px; background: #fff; }
+    .color-field { border: 0; padding: 0; margin: 15px 0 0; }
+    .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+    .swatch { position: relative; display: grid; place-items: center; height: 33px; width: 33px; border-radius: 50%; cursor: pointer; }
+    .swatch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .swatch span { width: 23px; height: 23px; border-radius: 50%; background: var(--subject-color); pointer-events: none; }
+    .swatch:has(:checked) { box-shadow: inset 0 0 0 2px var(--subject-color); }
+    .swatch:has(:focus-visible) { outline: 2px solid var(--green); outline-offset: 1px; }
+    .form-error { margin-top: 8px; font-size: 13px; color: #983041; }
+    .dialog-message { color: var(--muted); line-height: 1.65; overflow-wrap: anywhere; }
+    .slot-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .slot-option {
+      display: flex; align-items: center; gap: 8px; text-align: left;
+      padding: 9px; border-radius: 9px; border: 1px solid var(--line); background: #f6f7ef;
+      overflow-wrap: anywhere;
+    }
+    .slot-option:hover, .slot-option[aria-pressed="true"] { background: #e9f0dd; border-color: #b9d0a5; }
+
+    @media (max-width: 1020px) {
+      :root { --wrap: calc(100% - 42px); }
+      .workspace { grid-template-columns: minmax(0, 1fr) minmax(280px, .65fr); gap: 14px; }
+      .panel-heading { padding-inline: 17px; }
+      .table-scroll { padding-inline: 9px; }
+    }
+    @media (max-width: 870px) {
+      .workspace { grid-template-columns: minmax(0, 1fr); }
+      .checklist-inner { display: grid; grid-template-columns: 1fr 1fr; }
+      .list-section + .list-section { border-top: 0; border-left: 1px solid var(--line); }
+      .timetable { table-layout: fixed; }
+    }
+    @media (max-width: 580px) {
+      :root { --wrap: calc(100% - 24px); --radius: 17px; }
+      .topbar-inner { flex-direction: column; gap: 6px; align-items: stretch; padding: 9px 0 7px; }
+      .brand { align-self: start; }
+      .brand-icon { width: 32px; height: 32px; border-radius: 9px; font-size: 17px; }
+      .navigation { justify-content: space-between; }
+      .nav-button { padding: 7px 9px; }
+      main { margin-top: 14px; }
+      .hero { min-height: 151px; margin-bottom: 14px; border-radius: 17px; }
+      .hero-copy { padding: 17px 15px; max-width: min(100%, 280px); }
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 13px; max-width: 170px; }
+      .hero-art { transform: scale(.51); transform-origin: right center; right: -13px; width: 345px; }
+      .art-book { right: 82px; }
+      .art-orbit { right: 1px; }
+      .art-pencil { right: 7px; }
+      .art-spark.first { left: 100px; }
+      .panel-heading { padding: 15px 13px 9px; }
+      .panel h2 { font-size: 18px; }
+      .panel-hint { font-size: 12px; }
+      .week-range { font-size: 11px; padding-inline: 6px; }
+      .table-scroll { padding: 0 5px 8px; }
+      .timetable { min-width: 0; border-spacing: 3px 4px; }
+      .period-column { width: 35px; }
+      .period-num { font-size: 10px; }
+      .weekday { min-height: 45px; padding: 3px 0; font-size: 12px; border-radius: 6px; }
+      .weekday-date { font-size: 9px; }
+      .today-badge { font-size: 9px; margin-left: 2px; }
+      .course { min-height: 37px; font-size: 11px; gap: 3px; padding: 4px 2px; border-radius: 6px; }
+      .course-dot { width: 5px; height: 5px; }
+      .list-section { padding: 12px 9px; }
+      .list-title { gap: 4px; font-size: 13px; }
+      .list-icon { width: 21px; height: 21px; font-size: 11px; border-radius: 5px; }
+      .list-count { font-size: 11px; }
+      .check-row { gap: 6px; padding: 4px 2px; }
+      .item-subject { display: block; margin-left: 0; }
+      .manage-grid { grid-template-columns: repeat(auto-fill, minmax(146px, 1fr)); }
+    }
+    @media (max-width: 372px) { .hero-art { display: none; } }
+    @media (prefers-reduced-motion: no-preference) {
+      button { transition: background-color .15s, border-color .15s; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button type="button" class="brand" data-action="view" data-view="timetable">
+        <span class="brand-icon" aria-hidden="true">🎒</span>
+        <span>上学放学清单</span>
+      </button>
+      <nav class="navigation" aria-label="功能导航">
+        <button type="button" class="nav-button" data-action="view" data-view="timetable" aria-current="page">周课表</button>
+        <button type="button" class="nav-button" data-action="view" data-view="subjects">学科</button>
+        <button type="button" class="nav-button" data-action="view" data-view="items">文具</button>
+        <button type="button" class="nav-button" data-action="view" data-view="bindings">绑定文具</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <time class="today-date" id="today-date"></time>
+        <h1 id="hero-title">今天带什么？</h1>
+        <p>点选星期，看看上学和放学要带什么。</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-orbit"></div>
+        <div class="art-book">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="art-pencil"></div>
+        <div class="art-spark first">✦</div>
+        <div class="art-spark second">✧</div>
+      </div>
+    </section>
+    <div id="page"></div>
+  </main>
+
+  <footer><span id="storage-status" aria-live="polite"></span></footer>
+
+  <dialog id="editor" aria-labelledby="editor-title"></dialog>
+
+  <script>
+"use strict";
+
+const SCHOOL_DAYS = ['周一', '周二', '周三', '周四', '周五'];
+const SCHOOL_COLORS = [
+  '#7544b3', '#2476b8', '#a94371', '#ae551c',
+  '#168271', '#4b803c', '#6555ad', '#bd4553'
+];
+const PERIODS = 7;
+
+const school = (() => {
+  const storageKey = 'schoolbag-planner.v1';
+  const directions = ['morning', 'afternoon'];
+  let storageAvailable = false;
+  let idCounter = 0;
+
+  function createDemo() {
+    return {
+      subjects: [
+        { id: 'chinese', name: '语文', color: SCHOOL_COLORS[2] },
+        { id: 'math', name: '数学', color: SCHOOL_COLORS[1] },
+        { id: 'english', name: '英语', color: SCHOOL_COLORS[0] },
+        { id: 'art', name: '美术', color: SCHOOL_COLORS[3] },
+        { id: 'music', name: '音乐', color: SCHOOL_COLORS[6] },
+        { id: 'pe', name: '体育', color: SCHOOL_COLORS[5] },
+        { id: 'science', name: '科学', color: SCHOOL_COLORS[4] }
+      ],
+      items: [
+        { id: 'chinese-book', name: '语文书' },
+        { id: 'writing-book', name: '生字本' },
+        { id: 'math-book', name: '数学书' },
+        { id: 'math-exercises', name: '数学练习册' },
+        { id: 'english-book', name: '英语书' },
+        { id: 'markers', name: '彩笔' },
+        { id: 'sketchbook', name: '图画本' },
+        { id: 'recorder', name: '竖笛' },
+        { id: 'rope', name: '跳绳' },
+        { id: 'science-notebook', name: '科学记录本' }
+      ],
+      bindings: {
+        chinese: {
+          'chinese-book': { morning: true, afternoon: false },
+          'writing-book': { morning: false, afternoon: true }
+        },
+        math: {
+          'math-book': { morning: true, afternoon: false },
+          'math-exercises': { morning: true, afternoon: true }
+        },
+        english: { 'english-book': { morning: true, afternoon: false } },
+        art: {
+          markers: { morning: true, afternoon: false },
+          sketchbook: { morning: true, afternoon: true }
+        },
+        music: { recorder: { morning: true, afternoon: true } },
+        pe: { rope: { morning: true, afternoon: false } },
+        science: { 'science-notebook': { morning: true, afternoon: true } }
+      },
+      timetable: [
+        ['chinese', 'math', 'english', 'pe', 'art', 'chinese', null],
+        ['math', 'chinese', 'music', 'english', 'science', 'math', null],
+        ['chinese', 'english', 'math', 'science', 'pe', 'chinese', 'music'],
+        ['math', 'chinese', 'english', 'art', 'science', 'chinese', null],
+        ['english', 'math', 'chinese', 'pe', 'music', 'art', null]
+      ],
+      checks: {}
+    };
+  }
+
+  function readState() {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      storageAvailable = true;
+      if (raw) {
+        const stored = JSON.parse(raw);
+        const isEntry = entry => typeof entry?.id === 'string' && typeof entry.name === 'string';
+        if (
+          Array.isArray(stored?.subjects) && stored.subjects.every(isEntry) &&
+          Array.isArray(stored.items) && stored.items.every(isEntry) &&
+          stored.bindings && typeof stored.bindings === 'object' &&
+          Array.isArray(stored.timetable)
+        ) {
+          stored.timetable = SCHOOL_DAYS.map((_, day) =>
+            Array.from({ length: PERIODS }, (_, period) => stored.timetable[day]?.[period] ?? null)
+          );
+          if (!stored.checks || typeof stored.checks !== 'object' || Array.isArray(stored.checks)) {
+            stored.checks = {};
+          }
+          return stored;
+        }
+      }
+    } catch {
+      // A browser can deny storage access, and damaged saved data can be replaced by the demo.
+    }
+    return createDemo();
+  }
+
+  const state = readState();
+
+  function getWeekDates() {
+    const now = new Date();
+    const mondayOffset = (now.getDay() + 6) % 7;
+    return SCHOOL_DAYS.map((_, index) =>
+      new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset + index)
+    );
+  }
+
+  function getTodayIndex() {
+    const weekday = new Date().getDay();
+    return weekday > 0 && weekday < 6 ? weekday - 1 : -1;
+  }
+
+  function currentWeekKey() {
+    const monday = getWeekDates()[0];
+    return [monday.getFullYear(), monday.getMonth() + 1, monday.getDate()].join('-');
+  }
+
+  function save() {
+    const weekPrefix = currentWeekKey() + ':';
+    for (const key of Object.keys(state.checks)) {
+      if (!key.startsWith(weekPrefix)) delete state.checks[key];
+    }
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      storageAvailable = true;
+    } catch {
+      storageAvailable = false;
+    }
+    return storageAvailable;
+  }
+
+  function newId() {
+    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+    idCounter += 1;
+    return ['custom', Date.now().toString(36), idCounter.toString(36)].join('-');
+  }
+
+  function checkKey(dayIndex, direction) {
+    return [currentWeekKey(), dayIndex, direction].join(':');
+  }
+
+  function getChecklist(dayIndex, direction) {
+    if (!Number.isInteger(dayIndex) || !state.timetable[dayIndex] || !directions.includes(direction)) {
+      return [];
+    }
+    const subjectsById = new Map(state.subjects.map(subject => [subject.id, subject.name]));
+    const checkedItems = state.checks[checkKey(dayIndex, direction)];
+    const checked = new Set(Array.isArray(checkedItems) ? checkedItems : []);
+    const result = new Map();
+
+    for (const subjectId of new Set(state.timetable[dayIndex])) {
+      if (!subjectsById.has(subjectId)) continue;
+      const subjectName = subjectsById.get(subjectId);
+      const subjectBindings = state.bindings[subjectId];
+      for (const item of state.items) {
+        if (subjectBindings?.[item.id]?.[direction] !== true) continue;
+        if (!result.has(item.id)) {
+          result.set(item.id, {
+            id: item.id,
+            name: item.name,
+            subjects: [],
+            checked: checked.has(item.id)
+          });
+        }
+        const subjectNames = result.get(item.id).subjects;
+        if (!subjectNames.includes(subjectName)) subjectNames.push(subjectName);
+      }
+    }
+
+    return [...result.values()];
+  }
+
+  function setChecked(dayIndex, direction, itemId, checked) {
+    if (!getChecklist(dayIndex, direction).some(item => item.id === itemId)) return false;
+    const key = checkKey(dayIndex, direction);
+    const previous = state.checks[key];
+    const selected = new Set(Array.isArray(previous) ? previous : []);
+    if (checked) {
+      selected.add(itemId);
+    } else {
+      selected.delete(itemId);
+    }
+    state.checks[key] = [...selected];
+    return save();
+  }
+
+  function deleteSubject(id) {
+    state.subjects = state.subjects.filter(subject => subject.id !== id);
+    delete state.bindings[id];
+    state.timetable = state.timetable.map(periods =>
+      periods.map(subjectId => subjectId === id ? null : subjectId)
+    );
+    return save();
+  }
+
+  function deleteItem(id) {
+    state.items = state.items.filter(item => item.id !== id);
+    for (const subjectBindings of Object.values(state.bindings)) {
+      if (subjectBindings && typeof subjectBindings === 'object') delete subjectBindings[id];
+    }
+    for (const key of Object.keys(state.checks)) {
+      const selected = state.checks[key];
+      if (Array.isArray(selected)) state.checks[key] = selected.filter(itemId => itemId !== id);
+    }
+    return save();
+  }
+
+  return {
+    state,
+    save,
+    get storageAvailable() { return storageAvailable; },
+    newId,
+    getChecklist,
+    setChecked,
+    deleteSubject,
+    deleteItem,
+    getWeekDates,
+    getTodayIndex
+  };
+})();
+
+const DIRECTIONS = [
+  { id: 'morning', label: '上学带', icon: '☀️' },
+  { id: 'afternoon', label: '放学带', icon: '🏡' }
+];
+const COLOR_LABELS = ['紫色', '蓝色', '玫红色', '橙色', '青绿色', '草绿色', '蓝紫色', '红色'];
+
+const page = document.querySelector('#page');
+const hero = document.querySelector('#hero');
+const editor = document.querySelector('#editor');
+const status = document.querySelector('#storage-status');
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
+const shortDate = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric' });
+
+let currentView = 'timetable';
+let selectedDay = Math.max(0, school.getTodayIndex());
+let bindingSubjectId = school.state.subjects[0]?.id;
+
+function escapeHtml(value) {
+  const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(value).replace(/[&<>"']/g, character => entities[character]);
+}
+
+function attribute(name, value) {
+  return value ? ' ' + name : '';
+}
+
+function dateCode(date, separator = '.') {
+  return [date.getMonth() + 1, date.getDate()].join(separator);
+}
+
+function subjectColor(subject) {
+  return SCHOOL_COLORS.includes(subject?.color) ? subject.color : SCHOOL_COLORS[0];
+}
+
+function subjectDot(subject, className = 'subject-dot') {
+  return `<span class="${className}" style="--subject-color:${subjectColor(subject)}" aria-hidden="true"></span>`;
+}
+
+function notifyStorage() {
+  status.textContent = school.storageAvailable ? '本机自动保存' : '浏览器未保存本次改动';
+  status.classList.toggle('unsaved', !school.storageAvailable);
+}
+
+function saveChanges() {
+  school.save();
+  notifyStorage();
+}
+
+function render() {
+  hero.hidden = currentView !== 'timetable';
+  for (const button of document.querySelectorAll('.nav-button')) {
+    if (button.dataset.view === currentView) {
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
+    }
+  }
+
+  switch (currentView) {
+    case 'timetable': {
+      const todayNode = document.querySelector('#today-date');
+      const today = new Date();
+      todayNode.textContent = dateFormatter.format(today);
+      todayNode.dateTime = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
+        .map(part => String(part).padStart(2, '0')).join('-');
+      page.innerHTML = renderTimetable();
+      break;
+    }
+    case 'subjects':
+    case 'items':
+      page.innerHTML = renderCatalog(currentView);
+      break;
+    case 'bindings':
+      page.innerHTML = renderBindings();
+      break;
+  }
+  notifyStorage();
+}
+
+function renderTimetable() {
+  const dates = school.getWeekDates();
+  const today = school.getTodayIndex();
+  const knownSubjects = new Map(school.state.subjects.map(subject => [subject.id, subject]));
+
+  const dayHeaders = SCHOOL_DAYS.map((day, index) => `
+    <th scope="col">
+      <button type="button" class="weekday" data-action="day" data-day="${index}"
+        aria-label="查看${day}的清单" aria-pressed="${index === selectedDay}">
+        <span>${day}${index === today ? '<span class="today-badge">今</span>' : ''}</span>
+        <span class="weekday-date">${dateCode(dates[index], '/')}</span>
+      </button>
+    </th>`).join('');
+
+  const rows = Array.from({ length: PERIODS }, (_, period) => {
+    const cells = SCHOOL_DAYS.map((day, index) => {
+      const subject = knownSubjects.get(school.state.timetable[index][period]);
+      const label = `${day}第 ${period + 1} 节：${subject?.name ?? '空课'}，点击编辑`;
+      const style = subject ? ` style="--subject-color:${subjectColor(subject)}"` : '';
+      const content = subject
+        ? `${subjectDot(subject, 'course-dot')}<span class="course-name">${escapeHtml(subject.name)}</span>`
+        : '<span aria-hidden="true">＋</span>';
+      return `<td><button type="button" class="course ${subject ? 'filled' : 'empty'}"${style}
+        aria-label="${escapeHtml(label)}" title="${escapeHtml(subject?.name ?? '安排一节课')}"
+        data-action="slot" data-day="${index}" data-period="${period}">${content}</button></td>`;
+    }).join('');
+
+    const divider = period === 4
+      ? '<tr class="break-row"><td colspan="6"><span class="break-line">下午</span></td></tr>'
+      : '';
+    return `${divider}<tr><th class="period-num" scope="row">第 ${period + 1} 节</th>${cells}</tr>`;
+  }).join('');
+  const sample = school.state.isDemoTimetable !== false;
+  return `
+    <div class="workspace">
+      <section class="panel" aria-labelledby="week-title">
+        <div class="panel-heading">
+          <div>
+            <h2 id="week-title">本周课表</h2>
+            <p class="panel-hint">点击课程格可调课</p>
+          </div>
+          <div class="table-meta">
+            <span class="week-range">${sample ? '示例 · ' : ''}${dateCode(dates[0])}–${dateCode(dates[4])}</span>
+            <button type="button" class="text-button" data-action="clear-timetable">清空排课</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="timetable" aria-label="周一至周五课表">
+            <colgroup><col class="period-column"><col span="5"></colgroup>
+            <thead><tr><th class="period-num" scope="col">上午</th>${dayHeaders}</tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </section>
+      <section class="panel lists" id="checklists" aria-labelledby="selected-day-title">
+        ${renderChecklists()}
+      </section>
+    </div>`;
+}
+
+function renderChecklists() {
+  const date = school.getWeekDates()[selectedDay];
+  const weekLabel = shortDate.format(date);
+  return `
+    <div class="panel-heading">
+      <div>
+        <h2 id="selected-day-title">${SCHOOL_DAYS[selectedDay]}带什么</h2>
+        <p class="panel-hint">${weekLabel}${selectedDay === school.getTodayIndex() ? ' · 今天' : ''}</p>
+      </div>
+      <div class="day-controls">
+        <button type="button" class="small-button" aria-label="前一天" data-action="step" data-step="-1"${attribute('disabled', selectedDay === 0)}>‹</button>
+        <button type="button" class="small-button" aria-label="后一天" data-action="step" data-step="1"${attribute('disabled', selectedDay === SCHOOL_DAYS.length - 1)}>›</button>
+      </div>
+    </div>
+    <div class="checklist-inner">${DIRECTIONS.map(renderChecklist).join('')}</div>`;
+}
+
+function renderChecklist(direction) {
+  const list = school.getChecklist(selectedDay, direction.id);
+  const checkedCount = list.filter(item => item.checked).length;
+  const items = list.map(item => `
+    <li>
+      <label class="check-row">
+        <input type="checkbox" aria-label="${escapeHtml(item.name)}" data-input="check"
+          data-direction="${direction.id}" data-item="${escapeHtml(item.id)}"${attribute('checked', item.checked)}>
+        <span class="item-copy">
+          <span class="item-name">${escapeHtml(item.name)}</span>
+          <span class="item-subject">${escapeHtml(item.subjects.join('、'))}</span>
+        </span>
+      </label>
+    </li>`).join('');
+
+  return `
+    <section class="list-section" aria-labelledby="${direction.id}-title">
+      <div class="list-title ${direction.id}">
+        <span class="list-icon" aria-hidden="true">${direction.icon}</span>
+        <h3 id="${direction.id}-title">${direction.label}</h3>
+        <span class="list-count" id="${direction.id}-count" aria-live="polite">${checkedCount} / ${list.length} 件</span>
+      </div>
+      ${items ? `<ul class="check-items">${items}</ul>` : '<p class="list-empty">这一天没有需要准备的物品。</p>'}
+    </section>`;
+}
+
+function selectDay(day, wasStep) {
+  if (!Number.isInteger(day) || day < 0 || day >= SCHOOL_DAYS.length || day === selectedDay) return;
+  const step = day > selectedDay ? 1 : -1;
+  selectedDay = day;
+  for (const button of page.querySelectorAll('.weekday')) {
+    button.setAttribute('aria-pressed', String(Number(button.dataset.day) === selectedDay));
+  }
+  page.querySelector('#checklists').innerHTML = renderChecklists();
+  if (wasStep) {
+    const next = page.querySelector(`[data-step="${step}"]:not(:disabled)`);
+    (next ?? page.querySelector('.weekday[aria-pressed="true"]')).focus();
+  }
+}
+
+function catalogDetails(kind) {
+  if (kind === 'subjects') {
+    return { index: 'subjects', label: '学科', description: '添加课表里会用到的课程，每门课程可以选一个颜色。' };
+  }
+  return { index: 'items', label: '文具', description: '把书本、文具和其他上课用品加到这里，供学科关联。' };
+}
+
+function renderCatalog(kind) {
+  const details = catalogDetails(kind);
+  const entries = school.state[details.index];
+  const isSubject = kind === 'subjects';
+  const cards = entries.map(entry => {
+    const name = escapeHtml(entry.name);
+    const id = escapeHtml(entry.id);
+    const subtext = isSubject
+      ? `每周排课 ${school.state.timetable.flat().filter(subjectId => subjectId === entry.id).length} 节`
+      : `关联 ${school.state.subjects.filter(subject => {
+        const rules = school.state.bindings[subject.id]?.[entry.id];
+        return rules?.morning || rules?.afternoon;
+      }).length} 门学科`;
+    return `
+      <article class="manage-card">
+        <h2>${isSubject ? subjectDot(entry) : ''}<span>${name}</span></h2>
+        <p>${subtext}</p>
+        <div class="manage-card-actions">
+          <button type="button" class="text-button" data-action="edit" data-kind="${kind}" data-id="${id}" aria-label="编辑${name}">编辑</button>
+          <button type="button" class="text-button delete" data-action="delete" data-kind="${kind}" data-id="${id}" aria-label="删除${name}">删除</button>
+        </div>
+      </article>`;
+  }).join('');
+
+  return `
+    <section class="manage-page">
+      <div class="manage-intro">
+        <div><h1>${details.label}</h1><p>${details.description}</p></div>
+        <button type="button" class="primary-button" data-action="edit" data-kind="${kind}">＋ 新建${details.label}</button>
+      </div>
+      ${cards
+        ? `<div class="manage-grid">${cards}</div>`
+        : `<div class="panel empty-panel">还没有${details.label}，点上方按钮添加第一项。</div>`}
+    </section>`;
+}
+
+function renderBindings() {
+  const { subjects, items, bindings } = school.state;
+  if (!subjects.some(subject => subject.id === bindingSubjectId)) {
+    bindingSubjectId = subjects[0]?.id;
+  }
+  const activeSubject = subjects.find(subject => subject.id === bindingSubjectId);
+  const heading = `
+    <div class="manage-intro">
+      <div><h1>绑定文具</h1><p>选择一门学科，再勾选每件物品需要在哪个时候带。</p></div>
+    </div>`;
+  if (!activeSubject || !items.length) {
+    const goto = !activeSubject ? 'subjects' : 'items';
+    const label = catalogDetails(goto).label;
+    return `<section class="manage-page">${heading}
+      <div class="panel empty-panel">
+        <p>先添加${label}，再回来设置关联。</p>
+        <button type="button" class="primary-button" data-action="view" data-view="${goto}">前往${label}</button>
+      </div>
+    </section>`;
+  }
+
+  const choices = subjects.map(subject => `
+    <button type="button" class="subject-pill" data-action="bind-subject" data-id="${escapeHtml(subject.id)}"
+      aria-pressed="${subject.id === activeSubject.id}">${subjectDot(subject)}${escapeHtml(subject.name)}</button>`).join('');
+  const rows = items.map(item => {
+    const rules = bindings[activeSubject.id]?.[item.id] ?? {};
+    const cells = DIRECTIONS.map(direction => `
+      <td>
+        <label class="binding-toggle">
+          <input type="checkbox" aria-label="${escapeHtml(item.name)}：${direction.label}" data-input="binding"
+            data-item="${escapeHtml(item.id)}" data-direction="${direction.id}"${attribute('checked', rules[direction.id] === true)}>
+        </label>
+      </td>`).join('');
+    return `<tr><th class="binding-name" scope="row">${escapeHtml(item.name)}</th>${cells}</tr>`;
+  }).join('');
+
+  return `
+    <section class="manage-page">${heading}
+      <div class="subject-picker" aria-label="选择学科">${choices}</div>
+      <section class="panel binding-panel" aria-labelledby="bindings-title">
+        <div class="panel-heading"><h2 id="bindings-title">${escapeHtml(activeSubject.name)}用品</h2></div>
+        <table class="binding-table" aria-label="文具携带设置">
+          <colgroup><col><col class="binding-direction" span="2"></colgroup>
+          <thead><tr><th scope="col">文具</th><th scope="col">上学带</th><th scope="col">放学带</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </section>
+    </section>`;
+}
+
+function setBinding(itemId, direction, checked) {
+  const subjectBindings = school.state.bindings[bindingSubjectId] ??= {};
+  const rules = subjectBindings[itemId] ?? { morning: false, afternoon: false };
+  rules[direction] = checked;
+  if (rules.morning || rules.afternoon) {
+    subjectBindings[itemId] = rules;
+  } else {
+    delete subjectBindings[itemId];
+  }
+  saveChanges();
+}
+
+function openDialog(title, contents) {
+  editor.innerHTML = `
+    <div class="dialog-heading">
+      <h2 id="editor-title">${escapeHtml(title)}</h2>
+      <button type="button" class="small-button" aria-label="关闭" data-action="close">×</button>
+    </div>
+    ${contents}`;
+  editor.showModal();
+}
+
+function showCatalogEditor(kind, id) {
+  const { index, label } = catalogDetails(kind);
+  const existing = school.state[index].find(entry => entry.id === id);
+  const selectedColor = existing?.color ?? SCHOOL_COLORS[school.state.subjects.length % SCHOOL_COLORS.length];
+  const colors = kind === 'subjects' ? `
+    <fieldset class="color-field">
+      <legend class="field-label">课表颜色</legend>
+      <div class="swatches">${SCHOOL_COLORS.map((color, index) => `
+        <label class="swatch" style="--subject-color:${color}">
+          <input type="radio" name="color" value="${color}" aria-label="${COLOR_LABELS[index]}"${attribute('checked', selectedColor === color)}>
+          <span aria-hidden="true"></span>
+        </label>`).join('')}</div>
+    </fieldset>` : '';
+
+  openDialog(`${existing ? '编辑' : '新建'}${label}`, `
+    <form id="catalog-form" novalidate data-kind="${kind}" data-id="${escapeHtml(existing?.id ?? '')}">
+      <label class="field-label" for="entry-name">${label}名称</label>
+      <input class="name-input" id="entry-name" name="name" required maxlength="18" autofocus
+        value="${escapeHtml(existing?.name ?? '')}" placeholder="${kind === 'subjects' ? '例如 美术' : '例如 彩笔'}" autocomplete="off">
+      <p class="form-error" aria-live="polite" hidden></p>
+      ${colors}
+      <div class="dialog-actions">
+        <button type="button" class="secondary-button" data-action="close">取消</button>
+        <button type="submit" class="primary-button">保存</button>
+      </div>
+    </form>`);
+  editor.querySelector('#entry-name').select();
+}
+
+function saveCatalogEditor(form) {
+  const kind = form.dataset.kind;
+  const { index, label } = catalogDetails(kind);
+  const name = form.elements.name.value.trim();
+  const error = form.querySelector('.form-error');
+  let message = '';
+  if (!name) {
+    message = `请输入${label}名称。`;
+  } else if (school.state[index].some(entry => entry.id !== form.dataset.id && entry.name.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+    message = `已经有同名${label}了，请换个名称。`;
+  }
+  if (message) {
+    error.textContent = message;
+    error.hidden = false;
+    form.elements.name.focus();
+    return;
+  }
+
+  const existing = school.state[index].find(entry => entry.id === form.dataset.id);
+  const entry = existing ?? { id: school.newId() };
+  entry.name = name;
+  if (kind === 'subjects') entry.color = form.elements.color.value || SCHOOL_COLORS[0];
+  if (!existing) school.state[index].push(entry);
+
+  saveChanges();
+  editor.close();
+  render();
+  const focusTarget = existing ? page.querySelector(`[data-action="edit"][data-id="${CSS.escape(entry.id)}"]`) : page.querySelector('[data-action="edit"]');
+  focusTarget?.focus();
+}
+
+function showDeleteDialog(kind, id) {
+  const { index, label } = catalogDetails(kind);
+  const entry = school.state[index].find(item => item.id === id);
+  if (!entry) return;
+  const effect = kind === 'subjects' ? '课表里这门课的位置会腾空，文具关联也会移除。' : '当天清单和学科关联都会移除这件文具。';
+  openDialog(`删除${label}`, `
+    <p class="dialog-message">确定删除「${escapeHtml(entry.name)}」吗？${effect}</p>
+    <div class="dialog-actions">
+      <button type="button" class="secondary-button" data-action="close" autofocus>取消</button>
+      <button type="button" class="danger-button" data-action="confirm-delete" data-kind="${kind}" data-id="${escapeHtml(id)}">删除</button>
+    </div>`);
+}
+
+function removeEntry(kind, id) {
+  if (kind === 'subjects') {
+    if (school.state.timetable.some(day => day.includes(id))) school.state.isDemoTimetable = false;
+    school.deleteSubject(id);
+  } else {
+    school.deleteItem(id);
+  }
+  editor.close();
+  render();
+  page.querySelector('[data-action="edit"]')?.focus();
+}
+
+function showSlotEditor(day, period) {
+  const existing = school.state.timetable[day][period];
+  const options = school.state.subjects.map(subject => `
+    <button type="button" class="slot-option" data-action="set-slot" data-day="${day}" data-period="${period}"
+      data-id="${escapeHtml(subject.id)}" aria-pressed="${existing === subject.id}">
+      ${subjectDot(subject)}${escapeHtml(subject.name)}
+    </button>`).join('');
+  openDialog(`${SCHOOL_DAYS[day]} · 第 ${period + 1} 节`, `
+    <div class="slot-options">
+      ${options}
+      <button type="button" class="slot-option" data-action="set-slot" data-day="${day}"
+        data-period="${period}" aria-pressed="${existing === null}">设为空课</button>
+    </div>
+    ${options ? '' : '<div class="dialog-actions"><button type="button" class="primary-button" data-action="view" data-view="subjects">先新建学科</button></div>'}`);
+}
+
+function setSlot(day, period, id) {
+  if (school.state.timetable[day][period] !== id) {
+    school.state.timetable[day][period] = id;
+    school.state.isDemoTimetable = false;
+    saveChanges();
+  }
+  selectedDay = day;
+  editor.close();
+  render();
+  page.querySelector(`[data-action="slot"][data-day="${day}"][data-period="${period}"]`)?.focus();
+}
+
+function showClearSchedule() {
+  openDialog('清空排课', `
+    <p class="dialog-message">确定清空这张周课表？学科和文具设置会保留。</p>
+    <div class="dialog-actions">
+      <button type="button" class="secondary-button" data-action="close" autofocus>取消</button>
+      <button type="button" class="danger-button" data-action="confirm-clear">清空</button>
+    </div>`);
+}
+
+function clearSchedule() {
+  school.state.timetable = SCHOOL_DAYS.map(() => Array(PERIODS).fill(null));
+  school.state.checks = {};
+  school.state.isDemoTimetable = false;
+  saveChanges();
+  editor.close();
+  render();
+}
+
+document.addEventListener('click', event => {
+  const button = event.target.closest('button[data-action]');
+  if (!button || button.disabled) return;
+  const { action, view, kind, id, day, period, step } = button.dataset;
+  switch (action) {
+    case 'view':
+      if (editor.open) editor.close();
+      currentView = view;
+      render();
+      break;
+    case 'day':
+      selectDay(Number(day));
+      break;
+    case 'step':
+      selectDay(selectedDay + Number(step), true);
+      break;
+    case 'edit':
+      showCatalogEditor(kind, id);
+      break;
+    case 'delete':
+      showDeleteDialog(kind, id);
+      break;
+    case 'confirm-delete':
+      removeEntry(kind, id);
+      break;
+    case 'slot':
+      showSlotEditor(Number(day), Number(period));
+      break;
+    case 'set-slot':
+      setSlot(Number(day), Number(period), id ?? null);
+      break;
+    case 'clear-timetable':
+      showClearSchedule();
+      break;
+    case 'confirm-clear':
+      clearSchedule();
+      break;
+    case 'bind-subject':
+      bindingSubjectId = id;
+      render();
+      page.querySelector('.subject-pill[aria-pressed="true"]')?.focus();
+      break;
+    case 'close':
+      editor.close();
+      break;
+  }
+});
+
+editor.addEventListener('submit', event => {
+  if (event.target.id !== 'catalog-form') return;
+  event.preventDefault();
+  saveCatalogEditor(event.target);
+});
+
+page.addEventListener('change', event => {
+  const input = event.target;
+  const { input: type, direction, item } = input.dataset;
+  if (type === 'binding') {
+    setBinding(item, direction, input.checked);
+  } else if (type === 'check') {
+    school.setChecked(selectedDay, direction, item, input.checked);
+    const list = school.getChecklist(selectedDay, direction);
+    const count = list.filter(entry => entry.checked).length;
+    page.querySelector(`#${direction}-count`).textContent = `${count} / ${list.length} 件`;
+    notifyStorage();
+  }
+});
+
+render();
+  </script>
+</body>
+</html>
