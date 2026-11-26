@@ -44,7 +44,7 @@ npm run sync:life-data -- 49fceab4254c8c2df0f7cdb1b2959cab6c451b96
 ## 更新内容
 
 - 在 `src/content.ts` 的 `projects` 里新增作品，使用唯一的短横线 slug。设置 `featured: true` 可加入首页代表项目；其他作品自动进入「更多作品」。有公开体验地址时可填写 `demoUrl`。
-- 在同一文件的 `companies` 中按时间从早到晚维护公司；地图会按这个顺序放置节点。公司有一页 `overview`，并可通过 `topics` 添加独立专题。公司、专题各自使用唯一的短横线 slug。栏目可以配置图文段落、流程和配图，也可以通过 `projectSlugs` 链接到已确认归属的作品。
+- 在同一文件的 `companies` 中按任职时间从最近到最早维护公司；地图会按这个顺序放置节点。公司有一页 `overview`，并可通过 `topics` 添加独立专题。公司、专题各自使用唯一的短横线 slug。栏目可以配置图文段落、流程和配图，也可以通过 `projectSlugs` 链接到已确认归属的作品。
 - 在 `src/tools.ts` 添加小工具的名称、封面和简介，并在 `tools/<slug>/index.html` 放置工具入口。构建会自动生成这个工具的独立页面。需要在运行时读取的数据和封面放在 `public/tools/<slug>/` 下。鼓励器的节假日数据在对应的 `data/` 目录中。
 - 将可公开的 App 截图和工作配图放进 `public/media/`，在条目的 `media` 中填入 `path`（例如 `media/catalog.png`）、替代文字和图注。
 - 有可公开的简历和邮箱时，填写 `profile.resumePath` 和 `profile.email`。简历文件放在 `public/` 内，未配置时不会显示下载或联系入口。

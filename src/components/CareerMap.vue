@@ -35,7 +35,7 @@ const trail = computed(() => {
 <template>
   <div class="career-board" @keydown.esc="active && select(undefined, true)">
     <div class="career-field">
-      <div class="career-field-label"><span>职业地图</span><span aria-hidden="true">早期经历 → 现在</span></div>
+      <div class="career-field-label"><span>职业地图</span><span aria-hidden="true">最近经历 → 更早经历</span></div>
       <svg class="career-relief" viewBox="0 0 960 410" preserveAspectRatio="none" fill="none" aria-hidden="true" focusable="false">
         <g stroke="currentColor" stroke-width="1.35" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round">
           <path d="M-32 270C73 230 114 261 147 323s123 88 206 60m-384-90c96-40 133-4 158 49s124 93 205 63m-361-87c70-27 114-6 139 52s98 64 166 47M694-41c-14 73 64 118 148 108s133 36 153 98M720-41c-13 55 56 95 124 86 83-11 139 26 165 88M746-39c-7 49 49 72 103 66 68-7 126 9 158 59"/>
@@ -48,7 +48,7 @@ const trail = computed(() => {
       <svg class="career-trail" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <path :d="trail" fill="none" vector-effect="non-scaling-stroke" />
       </svg>
-      <ol class="career-nodes" :style="{ '--career-stops': companies.length }" role="list" aria-label="按时间从早到晚的公司经历">
+      <ol class="career-nodes" :style="{ '--career-stops': companies.length }" role="list" aria-label="从最近到最早的公司经历">
         <li v-for="(company, index) in companies" :key="company.slug" class="career-station-entry">
           <button
             :id="'career-stop-' + company.slug"

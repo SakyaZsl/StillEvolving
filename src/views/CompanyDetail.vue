@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { companies, companyPages, findCompanyPage, projects } from '../content'
 import { careerMapLink, companyLink } from '../experience-links'
 import { publicUrl } from '../public-url'
+import ArchitectureComparison from '../components/ArchitectureComparison.vue'
 import CareerLandmark from '../components/CareerLandmark.vue'
 import Missing from './Missing.vue'
 
@@ -32,14 +33,25 @@ const related = computed(() => projects.filter((item) => page.value?.projectSlug
     </header>
 
     <div class="career-detail-layout">
-      <div>
+      <div class="career-detail-body">
         <dl v-if="page.facts?.length" class="career-facts">
           <div v-for="fact in page.facts" :key="fact.label"><dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd></div>
         </dl>
 
         <section v-for="section in page.sections" :key="section.title" class="career-article-section">
           <h2>{{ section.title }}</h2><p>{{ section.text }}</p>
+          <dl v-if="section.points?.length" class="career-article-points">
+            <div v-for="point in section.points" :key="point.title">
+              <dt>{{ point.title }}</dt>
+              <dd>{{ point.text }}</dd>
+            </div>
+          </dl>
+          <a v-if="section.link" :href="section.link.url" class="simple-link" target="_blank" rel="noopener noreferrer">
+            {{ section.link.label }} <span aria-hidden="true">↗</span>
+          </a>
         </section>
+
+        <ArchitectureComparison v-if="page.architecture" :comparison="page.architecture" />
 
         <section v-if="page.flow?.items.length" class="career-article-section" aria-labelledby="career-flow-title">
           <h2 id="career-flow-title">{{ page.flow.title }}</h2>

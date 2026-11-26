@@ -144,12 +144,16 @@
 .career-detail-banner .career-landmark { max-height: 176px; }
 .career-detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(205px, 27%); gap: clamp(18px, 4vw, 46px); align-items: start; }
 .career-detail-layout:has(> :only-child) { grid-template-columns: minmax(0, 1fr); }
+.career-detail-body { min-width: 0; }
 .career-facts { display: flex; flex-wrap: wrap; gap: 15px 30px; margin-bottom: 20px; padding: 10px 0 13px; border-bottom: 1px solid var(--line); }
 .career-facts dt { margin-bottom: 5px; color: var(--muted); font-size: 12px; }
 .career-facts dd { font-size: 15px; font-weight: 650; }
 .career-article-section + .career-article-section { margin-top: 22px; }
 .career-article-section h2 { margin: 0 0 7px; font-size: clamp(21px, 2.5vw, 29px); letter-spacing: -.025em; }
 .career-article-section p { color: var(--muted); line-height: 1.8; font-size: 15px; }
+.career-article-points { display: grid; gap: 12px; margin: 12px 0 0; }
+.career-article-points dt { margin-bottom: 3px; color: var(--ink); font-size: 14px; font-weight: 700; }
+.career-article-points dd { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
 .career-article-flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(122px, 100%), 1fr)); gap: 6px; padding: 0; list-style: none; }
 .career-article-flow li { display: flex; gap: 7px; align-items: center; padding: 9px; border-radius: 6px; border: 1px solid #dfe5d6; background: #eef2e9; color: #3a4936; font-size: 13px; }
 .career-article-flow span { font: 700 11px var(--mono); }

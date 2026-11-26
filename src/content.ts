@@ -1,3 +1,6 @@
+import { zhongfeiRefactor } from './content/zhongfei-refactor'
+import { zhongfeiCompatibility } from './content/zhongfei-compatibility'
+
 export type Step = { title: string; text: string }
 export type Media = { path: string; alt: string; caption: string }
 type Entry = {
@@ -16,15 +19,24 @@ export type Project = Entry & {
   featured?: boolean
   demoUrl?: string
 }
+export type ArchitectureComparison = {
+  intro: string
+  sharedCode: string
+  examples: { name: string; responsibility: string; strength: string; tradeoff: string; code: string }[]
+  decision: string
+  boundary: string
+}
+
 export type CompanyPage = {
   slug?: string
   title: string
   summary: string
   intro: string
-  sections?: Step[]
+  sections?: (Step & { points?: Step[]; link?: { label: string; url: string } })[]
   facts?: Entry['facts']
   media?: Media[]
   flow?: { title: string; items: string[] }
+  architecture?: ArchitectureComparison
   projectSlugs?: string[]
 }
 export type Company = {
@@ -84,61 +96,6 @@ export const projects: Project[] = [
 
 export const companies: Company[] = [
   {
-    slug: 'zhongfei',
-    name: '中飞',
-    period: '上一段经历',
-    line: 'App 重构、多机型适配与线上问题处理',
-    landmark: 'workshop',
-    overview: {
-      title: '公司与项目介绍',
-      summary: '我在中飞负责什么',
-      intro: '在中飞，我主要负责已有 Android App 的重构，也处理日常测试问题、多机型兼容适配，以及在线客服收到的用户反馈。',
-      facts: [
-        { label: '主要职责', value: 'App 重构' },
-        { label: '工作范围', value: '开发、测试问题处理与线上支持' },
-      ],
-      sections: [
-        { title: '维护和改造已有应用', text: '我的工作既涉及重构已有代码，也包括处理测试时发现的问题。重构和日常维护都围绕同一款 App 展开。' },
-        { title: '跟进真实使用环境中的问题', text: '对于不同 Android 机型的兼容问题，我负责做代码适配。用户在线上遇到问题时，也可以通过在线客服反馈，由我跟进处理。' },
-      ],
-    },
-    topics: [
-      {
-        slug: 'app-refactor',
-        title: 'App 重构',
-        summary: '改造既有 App，处理日常测试反馈',
-        intro: '重构是我在中飞的主要职责。除了改造既有 App，我也处理日常测试反馈，跟进应用在测试中的实际表现。',
-        facts: [{ label: '负责范围', value: '既有 App 的重构与日常问题处理' }],
-        sections: [
-          { title: '既有应用的改造', text: '工作对象是已有的 App。我负责对现有代码进行重构，处理改造工作中的开发问题。' },
-          { title: '日常测试问题', text: '测试发现问题后，我负责跟进对应的代码问题。涉及不同设备表现的问题，也会按 Android 机型兼容适配来处理。' },
-        ],
-      },
-      {
-        slug: 'android-compatibility',
-        title: 'Android 多机型适配',
-        summary: '针对不同 Android 机型调整代码',
-        intro: '我负责处理同一款 App 在不同 Android 机型上的兼容问题，并根据设备的实际表现做代码适配。',
-        facts: [{ label: '适配对象', value: '同一款 App 在不同 Android 机型上的表现' }],
-        sections: [
-          { title: '难点：差异来自实际设备', text: '同一套代码需要在多种机型上运行。遇到机型兼容问题时，具体设备上的表现是判断适配范围的依据。' },
-          { title: '个人贡献：代码适配', text: '我根据不同机型的表现调整 App 代码，处理兼容性问题。' },
-        ],
-      },
-      {
-        slug: 'online-support',
-        title: '线上用户问题处理',
-        summary: '通过在线客服跟进 App 使用问题',
-        intro: '除了开发和测试，我也通过在线客服直接接收用户反馈，跟进用户在实际使用 App 时遇到的问题。',
-        sections: [
-          { title: '接收一线反馈', text: '在线客服是我接触用户反馈的入口。通过这个渠道，我能了解用户在日常使用中遇到的问题。' },
-          { title: '跟进对应的问题', text: '我负责及时跟进并处理收到的使用问题。遇到与设备兼容有关的问题时，也需要回到 App 代码做适配。' },
-        ],
-        flow: { title: '从反馈到处理', items: ['接收在线客服反馈', '跟进用户遇到的问题', '处理并跟进结果'] },
-      },
-    ],
-  },
-  {
     slug: 'kaisheng',
     name: '凯盛',
     period: '当前任职',
@@ -151,6 +108,49 @@ export const companies: Company[] = [
       intro: '凯盛是我目前任职的公司。',
       facts: [{ label: '任职状态', value: '当前任职' }],
     },
+  },
+  {
+    slug: 'zhongfei',
+    name: '中飞赛维',
+    period: '上一段经历',
+    line: '无人机飞巡 App · Android 重构与多机型适配',
+    landmark: 'workshop',
+    overview: {
+      title: '公司与项目介绍',
+      summary: '电科院无人机飞巡 App 与我的职责',
+      intro: '在中飞赛维，我参与了电科院无人机飞巡 App 项目。这款 App 用于协助四川电科院开展电力杆塔巡检。',
+      sections: [
+        {
+          title: '公司介绍',
+          text: '中飞赛维智能科技有限公司面向泛能源行业提供数智化解决方案，涵盖数字化运营管理、智能场景应用和 AI 辅助决策，服务于电力、能源、政府等领域的客户。',
+          link: { label: '公司官网', url: 'https://www.zfuav.com/#/home' },
+        },
+        {
+          title: '项目介绍 · 电科院无人机飞巡 App',
+          text: '巡检人员在 App 中获取无人机平台下发的飞巡任务，按任务要求对指定杆塔开展无人机巡检，并在巡检完成后上传现场多媒体资料。',
+        },
+        {
+          title: '我的职责',
+          text: '我主要负责飞巡 App 的 Android 端重构，同时处理日常测试反馈、不同 Android 机型的兼容问题，以及通过在线客服收到的用户反馈。',
+        },
+      ],
+      flow: { title: '巡检流程', items: ['获取飞巡任务', '巡检指定杆塔', '上传现场资料'] },
+    },
+    topics: [
+      zhongfeiRefactor,
+      zhongfeiCompatibility,
+      {
+        slug: 'online-support',
+        title: '线上用户问题处理',
+        summary: '通过在线客服跟进 App 使用问题',
+        intro: '除了开发和测试，我也通过在线客服直接接收用户反馈，跟进用户在实际使用 App 时遇到的问题。',
+        sections: [
+          { title: '接收一线反馈', text: '在线客服是我接触用户反馈的入口。通过这个渠道，我能了解用户在日常使用中遇到的问题。' },
+          { title: '跟进对应的问题', text: '我负责及时跟进并处理收到的使用问题。遇到与设备兼容有关的问题时，也需要回到 App 代码做适配。' },
+        ],
+        flow: { title: '从反馈到处理', items: ['接收在线客服反馈', '跟进用户遇到的问题', '处理并跟进结果'] },
+      },
+    ],
   },
 ]
 
