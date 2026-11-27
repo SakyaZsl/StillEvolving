@@ -80,6 +80,8 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .project-visual { height: 214px; position: relative; overflow: hidden; isolation: isolate; background-image: linear-gradient(#ffffff65 1px, transparent 1px), linear-gradient(90deg,#ffffff65 1px, transparent 1px); background-size: 24px 24px; background-color: #e5ebdd; }
 .visual-delivery { background-color: #ecf0d7; }
 .visual-commerce { background-color: #e6e9f5; }
+.project-preview { display: flex; justify-content: center; align-items: flex-start; padding-top: 18px; }
+.project-preview img { width: min(70%, 205px); height: auto; border: 4px solid #fff; border-radius: 16px; box-shadow: 0 3px 24px #2831322b; }
 .visual-label, .visual-foot { position: absolute; z-index: 1; font: 10px var(--mono); letter-spacing: .1em; color: #46523e; }
 .visual-label { top: 15px; left: 17px; }
 .visual-foot { bottom: 12px; right: 14px; }
@@ -137,6 +139,11 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .detail-lead { max-width: 510px; }
 .detail-demo { margin-top: 16px; }
 .detail-hero .project-visual { border-radius: 15px; height: 237px; }
+.project-screenshot { display: grid; justify-items: center; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: 15px; }
+.project-screenshot a { display: grid; justify-items: center; gap: 8px; max-width: 100%; border-radius: 13px; }
+.project-screenshot a > span { color: #354830; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.project-screenshot img { width: auto; height: auto; max-height: 420px; border: 3px solid #fff; border-radius: inherit; box-shadow: 0 5px 18px #28313225; }
+.project-screenshot figcaption { max-width: 350px; color: var(--muted); text-align: center; font-size: 13px; line-height: 1.65; }
 .fact-strip { display: flex; flex-wrap: wrap; gap: 18px 43px; padding: 17px 0; margin-block: 24px 30px; border-block: 1px solid var(--line); }
 .fact-strip dt { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
 .fact-strip dd { font-weight: 650; font-size: 15px; }
@@ -147,6 +154,17 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
 .step-number { font: 12px var(--mono); color: #526049; }
 .step-grid h3 { margin-block: 8px 6px; font-size: 18px; }
 .step-grid p { color: var(--muted); line-height: 1.75; font-size: 14px; }
+.project-flow { display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 24px; padding: 0; list-style: none; }
+.project-flow li { position: relative; padding: 13px; border: 1px solid #dce3d3; border-radius: 8px; background: #edf1e7; font-size: 14px; line-height: 1.55; }
+.project-flow li:not(:last-child)::after { content: '→' / ''; position: absolute; inset-inline-start: calc(100% + 5px); top: 50%; transform: translateY(-50%); color: #55684f; }
+.project-flow h3 { margin-bottom: 6px; font-size: 16px; }
+.project-flow p, .case-notes dd { color: var(--muted); font-size: 14px; line-height: 1.75; }
+.project-case { padding: clamp(16px, 3vw, 30px); border: 1px solid var(--line); border-radius: 15px; background: #fff; }
+.project-case h2 { margin-top: 0; }
+.case-intro { margin-bottom: 17px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+.case-notes { display: grid; gap: 12px; margin-top: 19px; }
+.case-notes > div { padding-top: 12px; border-top: 1px solid var(--line); }
+.case-notes dt { margin-bottom: 3px; font-weight: 700; }
 .media-grid img { border: 1px solid var(--line); border-radius: 10px; }
 .media-grid figcaption { font-size: 13px; color: var(--muted); margin-top: 7px; }
 .missing { padding-block: 55px 80px; }
@@ -183,6 +201,10 @@ h2 { font-size: clamp(29px, 3.65vw, 47px); letter-spacing: -.04em; margin-top: 8
   .detail { padding-block: 25px 44px; }
   .detail-hero { margin-top: 17px; }
   .detail-hero .project-visual { height: 190px; }
+  .project-preview img { width: min(68%, 176px); }
+  .project-screenshot img { max-height: 400px; }
+  .project-flow { grid-auto-flow: row; gap: 20px; }
+  .project-flow li:not(:last-child)::after { content: '↓' / ''; inset-inline-start: 14px; top: 100%; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }

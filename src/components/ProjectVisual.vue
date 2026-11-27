@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import type { Project } from '../content'
+import { publicUrl } from '../public-url'
 defineProps<{ project: Project }>()
 </script>
 
 <template>
-  <div class="project-visual" :class="'visual-' + (project.visual ?? 'default')" aria-hidden="true">
+  <div v-if="project.screenshot" class="project-visual project-preview" :class="'visual-' + (project.visual ?? 'default')" aria-hidden="true">
+    <img
+      :src="publicUrl(project.screenshot.path)"
+      :width="project.screenshot.width"
+      :height="project.screenshot.height"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div v-else class="project-visual" :class="'visual-' + (project.visual ?? 'default')" aria-hidden="true">
     <span class="visual-label">{{ project.visual === 'delivery' ? 'PRODUCT DELIVERY' : project.visual === 'commerce' ? 'CROSS-PLATFORM COMMERCE' : 'PROJECT NOTES' }}</span>
     <div v-if="project.visual === 'delivery'" class="delivery-art">
       <div class="delivery-tile"><span class="petal-symbol">✳</span></div>

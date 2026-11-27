@@ -42,7 +42,7 @@ const other = projects.filter((project) => !project.featured)
     <section id="projects" class="home-section" aria-labelledby="projects-title">
       <div class="section-head">
         <div><p class="section-index">01 / SELECTED WORK</p><h2 id="projects-title">代表项目</h2></div>
-        <p>一个从设计做到上架，一个把跨端商城的购买流程做完整。</p>
+        <p>从 Flutter 与 H5 的商城开发，到 App 产品设计和多渠道发布。</p>
       </div>
       <div class="project-grid">
         <RouterLink v-for="project in featured" :key="project.slug" class="project-card" :to="{ name: 'project', params: { slug: project.slug } }">

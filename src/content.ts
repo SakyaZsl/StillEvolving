@@ -18,6 +18,9 @@ export type Project = Entry & {
   visual?: 'delivery' | 'commerce'
   featured?: boolean
   demoUrl?: string
+  screenshot?: Media & { width: number; height: number }
+  productFlow?: { title: string; steps: string[] }
+  technicalCase?: { title: string; intro: string; flow: Step[]; notes: Step[] }
 }
 export type ArchitectureComparison = {
   intro: string
@@ -55,42 +58,87 @@ export const profile: { resumePath?: string; email?: string } = {}
 
 export const projects: Project[] = [
   {
-    slug: 'huahua-youbei',
-    name: '花花有贝',
-    category: 'App 产品设计与交付',
-    line: '从 App 和图标设计，到架构、开发、测试、上架与后续更新。',
-    intro: '这是一款结合工具功能与贷款业务的 App。我负责整个 App 的设计和开发，也负责测试、上架和后续更新。',
-    tags: ['产品设计', '代码架构', '应用上架'],
-    visual: 'delivery',
-    featured: true,
-    facts: [
-      { label: '产品类型', value: '工具功能 + 贷款业务' },
-      { label: '我的角色', value: 'App 设计、开发、测试与发布' },
-    ],
-    steps: [
-      { title: '产品与图标设计', text: '负责 App 整体设计和应用图标设计，组织产品中的工具功能和贷款功能。' },
-      { title: '架构与功能开发', text: '设计 App 的代码架构，完成产品功能的开发。' },
-      { title: '测试、发布与迭代', text: '完成项目测试，处理 App 上架工作，并负责后续版本的更新。' },
-    ],
-  },
-  {
     slug: 'xiangouhua',
     name: '享购花',
     category: 'Flutter + H5 商城',
-    line: '搭建 Flutter 外壳和内嵌 H5，做通从商品列表到下单支付的购买流程。',
-    intro: '这是一个将 H5 商城嵌入 Flutter App 的项目。我负责搭建 Flutter App 外壳与内嵌 H5 项目，并完成商城购买流程的开发。',
-    tags: ['Flutter', '内嵌 H5', '下单支付'],
+    line: '搭建 Flutter 外壳和内嵌 H5，交付从商品浏览到下单支付的商城流程。',
+    intro: '我负责搭建 Flutter App 外壳和内嵌 H5 商城，并完成从商品浏览、下单到支付结果的流程。App 管理登录状态，H5 承担商城页面和购买流程。',
+    tags: ['Flutter', 'WebView', '登录态同步', '下单支付'],
     visual: 'commerce',
     featured: true,
+    screenshot: {
+      path: 'media/xiangouhua-mall.webp',
+      width: 818,
+      height: 1742,
+      alt: '享购花商城首页，展示商品搜索、分类导航和好物推荐',
+      caption: '商城首页。搜索、商品分类和推荐分别为用户提供按关键词找货、按类目浏览和直接选购的入口。',
+    },
     facts: [
       { label: '技术组合', value: 'Flutter App + 内嵌 H5' },
-      { label: '负责范围', value: '两端项目搭建与购买流程开发' },
+      { label: '我的职责', value: 'Flutter 外壳、H5 搭建与购买流程开发' },
     ],
     steps: [
-      { title: '搭建 Flutter App 外壳', text: '搭建外层 Flutter App 框架，为内嵌 H5 商城提供承载入口。' },
-      { title: '搭建内嵌 H5', text: '搭建内部 H5 项目，开发商城的商品列表等业务页面。' },
-      { title: '完成购买流程', text: '打通商品展示、下单和支付，完成从浏览到购买的核心链路。' },
+      { title: '组织商城入口', text: '在首页把商品搜索、类目和推荐摆在用户能直接找到的位置，再接入商品列表与详情。' },
+      { title: '搭建 Flutter 与 H5 的分工', text: 'Flutter 承载 WebView 和 App 登录，H5 开发商城页面，通过桥接同步会话。' },
+      { title: '接通订单和支付', text: '把选购、下单、支付和支付结果串成一条流程，用户可以从商品页一路走到结果页。' },
     ],
+    productFlow: {
+      title: '商城购买流程',
+      steps: ['搜索或浏览商品', '查看商品详情', '确认并提交订单', '支付与查看结果'],
+    },
+    technicalCase: {
+      title: 'Flutter 与 H5 的登录态同步',
+      intro: 'App 登录成功后，WebView 里的商城仍需拿到凭证才能请求订单等接口。页面加载和会话同步是异步的，首个请求可能早于凭证到达。',
+      flow: [
+        { title: 'Flutter · 管理登录', text: '在 App 完成登录，持有当前会话凭证。' },
+        { title: 'WebView · 同步会话', text: 'Flutter 将凭证同步到受信任的商城页面，H5 也可以通过桥接主动查询登录状态。' },
+        { title: 'H5 · 统一处理请求', text: '公共请求层对需要登录的请求等待凭证，在可用时填入请求头，再调用业务接口。' },
+      ],
+      notes: [
+        { title: '为什么放在公共请求层', text: '订单等页面共享同一套逻辑。公开接口可跳过凭证等待。受保护接口的等待有超时，超时后若接口返回 401，就走已有的登录失效处理。' },
+        { title: '401 排障演示', text: '在同一次 WebView 加载里，记录凭证同步和首个订单请求的时间，只记录请求头是否带凭证。请求先发出就查时序，凭证始终没到就查桥接。带上凭证仍返回 401，再核对凭证有效性和请求头格式。' },
+        { title: '怎么验证', text: '用首次进入商城、重新登录、凭证延迟和凭证失效四种情况，对照 H5 的请求头和接口响应。另测公开商品页的请求，确认它可以跳过凭证等待。' },
+      ],
+    },
+  },
+  {
+    slug: 'huahua-youbei',
+    name: '花花有贝',
+    category: 'Flutter App 设计与交付',
+    line: '负责 App 和图标设计、开发与测试，完成六个 Android 渠道的签名打包。',
+    intro: '我负责 App 和图标设计、Flutter 开发、测试、应用市场上架及后续更新。这里用记账首页说明产品设计，再用 Android 多渠道构建说明发布过程。',
+    tags: ['产品设计', 'Flutter', 'Android 多渠道发布'],
+    visual: 'delivery',
+    featured: true,
+    screenshot: {
+      path: 'media/huahua-youbei-ledger.webp',
+      width: 900,
+      height: 2000,
+      alt: '花花有贝记账首页，展示本月收支、预算、最近记录和记一笔入口',
+      caption: '记账首页。从月度收支、预算到最近记录，按用户打开账本时最常看的顺序排列。',
+    },
+    facts: [
+      { label: '展示界面', value: '记账首页' },
+      { label: '交付记录', value: '六个 Android 渠道的签名 APK' },
+    ],
+    steps: [
+      { title: '把账本做成打开就能看', text: '把本月结余、收入和支出放在首屏，接着展示预算余额和最近记录。空账本也留出「记一笔」入口，让新用户知道下一步怎么做。' },
+      { title: '完成 App 设计和开发', text: '负责应用图标和页面设计，搭建 Flutter 应用结构，开发记账、预算、统计等功能并跟进测试。' },
+      { title: '跟进上架与更新', text: '根据不同市场准备材料、提交并处理审核反馈，后续版本继续核对渠道包和更新配置。' },
+    ],
+    technicalCase: {
+      title: '一套 App 如何交付六个 Android 渠道',
+      intro: '同一版 App 要交付给官方、小米、华为、OPPO、vivo 和 360。构建产物需要能对应目标渠道，应用内检查更新也要知道当前安装的是哪个渠道和版本。',
+      flow: [
+        { title: '按渠道构建', text: '通过 Gradle Flavor 写入对应的渠道资源，从同一套项目批量生成各渠道的 Release APK。' },
+        { title: '逐包核对', text: '打包后逐个核对实际产物中的渠道标识、版本号和签名，再交付对应的 APK。' },
+        { title: '检查更新', text: '客户端按构建号 versionCode 判断是否有更新，用 versionName 展示版本，并在安装前检查下载包。' },
+      ],
+      notes: [
+        { title: '构建和运行时共用渠道标识', text: 'Flutter 从 Android 包里读取渠道标识，让构建配置和运行时使用同一个值。' },
+        { title: '怎么验证交付', text: '1.0.2（构建号 5）共生成六个签名 APK，逐个核对了版本号、渠道和签名。应用内更新还检查下载包的包名、版本和记账版标识，发布时需要确认对应渠道的更新配置指向正确文件。' },
+      ],
+    },
   },
 ]
 

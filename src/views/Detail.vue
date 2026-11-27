@@ -21,7 +21,25 @@ const back = { name: 'home', hash: '#projects' }
         <ul v-if="entry.tags.length" class="tags" aria-label="关键词"><li v-for="tag in entry.tags" :key="tag">{{ tag }}</li></ul>
         <a v-if="entry.demoUrl" class="button button-primary detail-demo" :href="entry.demoUrl">体验项目 <span aria-hidden="true">↗</span></a>
       </div>
-      <ProjectVisual :project="entry" />
+      <figure v-if="entry.screenshot" class="project-screenshot" :class="'visual-' + (entry.visual ?? 'default')">
+        <a
+          :href="publicUrl(entry.screenshot.path)"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="'在新标签查看' + entry.name + '完整截图'"
+        >
+          <img
+            :src="publicUrl(entry.screenshot.path)"
+            :alt="entry.screenshot.alt"
+            :width="entry.screenshot.width"
+            :height="entry.screenshot.height"
+            decoding="async"
+          />
+          <span>查看完整截图 <span aria-hidden="true">↗</span></span>
+        </a>
+        <figcaption>{{ entry.screenshot.caption }}</figcaption>
+      </figure>
+      <ProjectVisual v-else :project="entry" />
     </div>
     <dl class="fact-strip">
       <div v-for="fact in entry.facts" :key="fact.label"><dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd></div>
@@ -36,6 +54,30 @@ const back = { name: 'home', hash: '#projects' }
           <h3>{{ step.title }}</h3><p>{{ step.text }}</p>
         </li>
       </ol>
+    </section>
+
+    <section v-if="entry.productFlow" class="detail-section" aria-labelledby="product-flow">
+      <h2 id="product-flow">{{ entry.productFlow.title }}</h2>
+      <ol class="project-flow">
+        <li v-for="step in entry.productFlow.steps" :key="step">{{ step }}</li>
+      </ol>
+    </section>
+
+    <section v-if="entry.technicalCase" class="detail-section project-case" aria-labelledby="technical-case">
+      <h2 id="technical-case">{{ entry.technicalCase.title }}</h2>
+      <p class="case-intro">{{ entry.technicalCase.intro }}</p>
+      <ol class="project-flow">
+        <li v-for="step in entry.technicalCase.flow" :key="step.title">
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </li>
+      </ol>
+      <dl class="case-notes">
+        <div v-for="note in entry.technicalCase.notes" :key="note.title">
+          <dt>{{ note.title }}</dt>
+          <dd>{{ note.text }}</dd>
+        </div>
+      </dl>
     </section>
 
     <section v-if="entry.media?.length" class="detail-section" aria-labelledby="media-title">
